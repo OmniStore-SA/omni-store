@@ -7,111 +7,72 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #c7a13c; --secondary: #8a2be2; --bg: #000; }
-
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); color: white; overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-        }
-
-        header { 
-            position: absolute; top: 2%; width: 100%; z-index: 50;
-            text-align: center; pointer-events: none;
-        }
-        .logo-frame {
-            width: 80px; height: 80px; margin: 0 auto;
-            border-radius: 50%; overflow: hidden;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(199, 161, 60, 0.5);
-            background: #000;
-        }
-        .logo-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-        .hero-container {
-            width: 100vw; height: 100vh;
-            position: relative; overflow: hidden;
-        }
-
-        .hero-image { width: 100%; height: 100%; object-fit: cover; }
-        .mobile-only { display: none; }
-        .pc-only { display: block; }
-
-        @media (max-width: 600px) {
-            .mobile-only { display: block; }
-            .pc-only { display: none; }
-        }
-
-        /* --- خريطة اللمس للجوال (دقة 100%) --- */
-        .map-mobile { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 40; pointer-events: none;
-        }
-        .map-mobile div { position: absolute; cursor: pointer; pointer-events: auto; }
-
-        /* 1. المنطقة الحمراء (أطلق العنان - جميع المنتجات) */
-        /* تم حصرها في جهة اليسار والوسط فقط لترك اليمين للأيقونات */
-        .mob-red-zone { top: 17%; left: 4%; width: 62%; height: 16%; }
-
-        /* 2. المناطق الخضراء (الأيقونات الطائرة على اليمين) */
-        /* أيقونات الترفيه العلوية */
-        .mob-green-top { top: 17%; left: 68%; width: 28%; height: 35%; }
-        /* أيقونات الذكاء الاصطناعي والسوشال ميديا */
-        .mob-green-mid { top: 53%; left: 68%; width: 28%; height: 35%; }
-
-        /* 3. البراويز الأساسية (جهة اليسار) */
-        .mob-b-entertainment { top: 34%; left: 4%; width: 62%; height: 18%; }
-        .mob-b-ai { top: 53%; left: 4%; width: 62%; height: 18%; }
+        :root { --primary: #c7a13c; --bg: #000; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; overflow-x: hidden; font-family: sans-serif; }
         
-        /* 4. الصناديق السفلية */
-        .mob-b-social { top: 72%; left: 4%; width: 45%; height: 18%; }
-        .mob-b-cards { top: 72%; left: 51%; width: 45%; height: 18%; }
+        header { position: absolute; top: 2%; width: 100%; z-index: 200; text-align: center; pointer-events: none; }
+        .logo-frame { width: 75px; height: 75px; margin: 0 auto; border-radius: 50%; border: 2px solid var(--primary); background: #000; box-shadow: 0 0 15px var(--primary); }
+        .logo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-        /* --- الأقسام الداخلية --- */
+        .hero-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; }
+
+        /* طبقة الأزرار التفاعلية - دقة 100% بناءً على الرسمة */
+        .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; }
+        .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+        /* المنطقة الحمراء: جميع المنتجات */
+        .btn-red { top: 18%; left: 4%; width: 55%; height: 14%; }
+
+        /* المنطقة الخضراء: أيقونات اليمين */
+        .btn-green-top { top: 17%; left: 63%; width: 33%; height: 35%; }
+        .btn-green-mid { top: 52%; left: 63%; width: 33%; height: 35%; }
+
+        /* الأقسام الأساسية */
+        .btn-ent-box { top: 34%; left: 4%; width: 58%; height: 17%; }
+        .btn-ai-box { top: 53%; left: 4%; width: 58%; height: 17%; }
+        .btn-social { top: 72%; left: 4%; width: 45%; height: 17%; }
+        .btn-cards { top: 72%; left: 51%; width: 45%; height: 17%; }
+
+        /* الصفحات الداخلية */
         .section-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; overflow-y: auto; }
         .section-page.active { display: block; }
-        .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; }
-        .back-btn { background: var(--primary); border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; }
-        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; padding-bottom: 100px; }
-        .product-card { background: #161616; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #222; }
-        .product-card img { width: 100%; border-radius: 5px; height: 90px; object-fit: cover; }
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 1100; box-sizing: border-box; }
+        .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; z-index: 1001; }
+        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; padding-bottom: 120px; }
+        .product-card { background: #161616; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #222; }
+        .product-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; }
+        
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 20px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 1100; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-frame"><img src="لوقو متجر اومني .jpeg"></div>
-</header>
+<header><div class="logo-frame"><img src="لوقو متجر اومني .jpeg"></div></header>
 
 <div class="hero-container">
-    <img src="اومني القائمه الاوله.jpeg" class="hero-image pc-only">
-    <img src="صوره القائمه الرئيسيه للجوال.jpeg" class="hero-image mobile-only">
-    <div class="map-mobile mobile-only">
-        <div class="mob-red-zone" onclick="openSection('all', 'جميع المنتجات')"></div>
-        
-        <div class="mob-green-top" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></div>
-        <div class="mob-green-mid" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></div>
-
-        <div class="mob-b-entertainment" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></div>
-        <div class="mob-b-ai" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></div>
-        
-        <div class="mob-b-social" onclick="openSection('social', 'دعم السوشال ميديا')"></div>
-        <div class="mob-b-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></div>
+    <img src="صوره القائمه الرئيسيه للجوال.jpeg" class="hero-image">
+    <div class="touch-grid">
+        <button class="btn-red" onclick="openSection('all', 'جميع الخدمات')"></button>
+        <button class="btn-green-top" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
+        <button class="btn-green-mid" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
+        <button class="btn-ent-box" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
+        <button class="btn-ai-box" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
+        <button class="btn-social" onclick="openSection('social', 'دعم السوشال ميديا')"></button>
+        <button class="btn-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></button>
     </div>
 </div>
 
 <div class="section-page" id="sectionPage">
     <div class="section-header">
-        <button class="back-btn" onclick="closeSection()">🔙 عودة</button>
-        <h2 id="sectionTitle" style="margin-right: 15px; color: var(--primary); font-size: 1em;"></h2>
+        <button style="background:var(--primary); border:none; padding:10px 18px; border-radius:5px; font-weight:bold;" onclick="closeSection()">🔙 عودة</button>
+        <h2 id="sectionTitle" style="margin-right:15px; font-size:1.1em; color:var(--primary)"></h2>
     </div>
     <div class="products-grid" id="sectionProducts"></div>
 </div>
 
 <div class="cart-bar" id="cartBar">
-    <div id="cartCount" style="color: var(--primary); font-weight: bold;">0 منتجات</div>
-    <button style="background:var(--primary); border:none; padding:10px 20px; border-radius:5px;" onclick="sendOrder()">طلب الآن 👑</button>
+    <div id="cartCount" style="color:var(--primary); font-weight:bold;">السلة: 0</div>
+    <button style="background:var(--primary); border:none; padding:12px 25px; border-radius:5px; font-weight:bold;" onclick="sendOrder()">طلب الآن 👑</button>
 </div>
 
 <script>
@@ -144,14 +105,13 @@
                     <img src="${p.image}">
                     <h4>${p.name}</h4>
                     <p style="color:var(--primary)">${p.price} ريال</p>
-                    <button style="width:100%; padding:8px; background:var(--secondary); color:white; border:none; border-radius:5px;" onclick="addToCart('${p.name}', '${p.price}')">إضافة</button>
+                    <button style="width:100%; padding:8px; background:#8a2be2; color:white; border:none; border-radius:5px;" onclick="addToCart('${p.name}', '${p.price}')">إضافة 🛒</button>
                 </div>`;
         });
         document.getElementById('sectionPage').classList.add('active');
     }
 
     function closeSection() { document.getElementById('sectionPage').classList.remove('active'); }
-
     function addToCart(name, price) {
         cart.push({name, price});
         document.getElementById('cartBar').style.display = 'flex';
@@ -159,9 +119,10 @@
     }
 
     function sendOrder() {
-        let msg = "طلب جديد:\n";
-        cart.forEach(i => msg += `- ${i.name}\n`);
-        window.open(`https://wa.me/966550000000?text=${encodeURIComponent(msg)}`);
+        let msg = "طلب جديد من Omni Store:\n\n";
+        cart.forEach((i, index) => msg += `${index+1}- ${i.name} (${i.price} ريال)\n`);
+        // تم تعديل الرقم هنا ليكون رقمك الخاص
+        window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
     }
 </script>
 </body>
