@@ -9,90 +9,114 @@
     <style>
         :root { --primary: #c7a13c; --secondary: #8a2be2; --bg: #0a0a0a; }
         
-        /* أنميشن دخول المتجر القديم الجميل */
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        /* أنميشن دخول المتجر */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        /* أنميشن انتقال سريع للقسم */
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background: var(--bg); 
             color: white; 
             margin: 0; 
-            padding-bottom: 80px;
-            animation: fadeInScale 1.2s ease-out; /* تطبيق الأنميشن */
+            overflow-x: hidden;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        header { text-align: center; padding: 20px; background: #000; border-bottom: 2px solid var(--primary); }
-        
-        /* تنسيق الصورة الكبيرة التفاعلية */
+        /* تنسيق الهيدر مع اللوجو الجديد */
+        header { text-align: center; padding: 15px; background: #000; border-bottom: 2px solid var(--primary); }
+        .logo { height: 80px; filter: drop-shadow(0 0 5px var(--primary)); }
+
+        /* الصفحة الرئيسية: الصورة التفاعلية فقط */
+        .main-page { display: block; text-align: center; }
         .hero-container {
-            width: 95%;
-            max-width: 1000px;
-            margin: 20px auto;
+            width: 100vw;
+            height: calc(100vh - 120px); /* ملء الشاشة مع ترك مساحة للهيدر */
             position: relative;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(199, 161, 60, 0.4);
-        }
-
-        .hero-image { width: 100%; display: block; }
-
-        /* مناطق الضغط الشفافة فوق الصورة */
-        .map-overlay {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 35%; /* تغطية منطقة القوائم الأربعة في أسفل الصورة */
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .map-area { flex: 1; cursor: pointer; transition: 0.3s; }
-        .map-area:hover { background: rgba(138, 43, 226, 0.1); }
+        .hero-image { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        .tabs { display: flex; overflow-x: auto; gap: 10px; padding: 15px; background: #111; border-bottom: 1px solid #222; }
-        .tab-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 10px 18px; cursor: pointer; border-radius: 20px; white-space: nowrap; }
-        .tab-btn.active { background: linear-gradient(45deg, var(--secondary), var(--primary)); border-color: var(--primary); }
+        /* مناطق الضغط فوق الأقسام الأربعة (المحددة بالأزرق) */
+        .map-overlay { position: absolute; bottom: 5%; width: 90%; height: 30%; display: flex; gap: 5px; }
+        .map-area { flex: 1; cursor: pointer; border-radius: 10px; }
+        .map-area:hover { background: rgba(199, 161, 60, 0.1); }
 
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-        .product-card { background: #161616; border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; transition: 0.3s; }
-        .product-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .product-card img { width: 100%; border-radius: 8px; height: 110px; object-fit: cover; }
-        .price { color: var(--primary); font-weight: bold; display: block; margin: 10px 0; }
-        .buy-btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 1000; }
+        /* صفحة القسم (مخفية في البداية) */
+        .section-page { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: var(--bg); 
+            z-index: 100; 
+            padding-top: 20px;
+            animation: slideIn 0.4s ease-out;
+            overflow-y: auto;
+        }
+
+        .section-header { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px; 
+            background: #111; 
+            border-bottom: 2px solid var(--primary);
+            position: sticky; top: 0; z-index: 101;
+        }
+
+        .back-btn { 
+            background: var(--primary); 
+            color: black; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-left: 15px;
+        }
+
+        /* شبكة المنتجات داخل القسم */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px; padding-bottom: 100px; }
+        .product-card { background: #161616; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #222; }
+        .product-card img { width: 100%; border-radius: 8px; height: 120px; object-fit: cover; }
+        .price { color: var(--primary); font-weight: bold; font-size: 1.1em; margin: 10px 0; display: block; }
+        .buy-btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+
+        /* سلة المشتريات */
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 200; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="jpeg لوزو متجر اومني.jpeg" alt="Logo" style="height: 60px;">
-</header>
+    <img src="لوقو متجر اومني .jpeg" class="logo" alt="Omni Logo"> </header>
 
-<div class="hero-container" id="mainHero">
-    <img src="اومني القائمه الاوله.jpeg" class="hero-image" alt="Main Banner">
-    <div class="map-overlay">
-        <div class="map-area" onclick="filterItems('entertainment')" title="ترفيه بلا حدود"></div>
-        <div class="map-area" onclick="filterItems('ai')" title="أدوات الذكاء الاصطناعي"></div>
-        <div class="map-area" onclick="filterItems('social')" title="دعم السوشال ميديا"></div>
-        <div class="map-area" onclick="filterItems('cards')" title="بطاقات وهدايا"></div>
+<div class="main-page" id="homePage">
+    <div class="hero-container">
+        <img src="اومني القائمه الاوله.jpeg" class="hero-image">
+        <div class="map-overlay">
+            <div class="map-area" onclick="openSection('cards', 'بطاقات وهدايا واشتراكات أخرى')"></div>
+            <div class="map-area" onclick="openSection('social', 'دعم السوشال ميديا')"></div>
+            <div class="map-area" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></div>
+            <div class="map-area" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></div>
+        </div>
     </div>
 </div>
 
-<div class="tabs" id="tabsBar">
-    <button class="tab-btn active" onclick="filterItems('all')">الكل</button>
-    <button class="tab-btn" id="btn-cards" onclick="filterItems('cards')">بطاقات وهدايا</button>
-    <button class="tab-btn" id="btn-social" onclick="filterItems('social')">دعم سوشل ميديا</button>
-    <button class="tab-btn" id="btn-ai" onclick="filterItems('ai')">ادوات الذكاء الاصطناعي</button>
-    <button class="tab-btn" id="btn-entertainment" onclick="filterItems('entertainment')">ترفيه بلا حدود</button>
+<div class="section-page" id="sectionPage">
+    <div class="section-header">
+        <button class="back-btn" onclick="closeSection()">🔙 عودة</button>
+        <h2 id="sectionTitle" style="margin: 0; color: var(--primary);">اسم القسم</h2>
+    </div>
+    <div class="products-grid" id="sectionProducts">
+        </div>
 </div>
 
-<div class="products-grid" id="productsDisplay"></div>
-
 <div class="cart-bar" id="cartBar">
-    <div id="cartCount" style="color: var(--primary); font-weight: bold;">السلة: 0</div>
-    <button class="buy-btn" style="width: auto; padding: 10px 25px;" onclick="sendOrder()">إتمام الطلب الملكي 👑</button>
+    <div id="cartCount" style="color: var(--primary); font-weight: bold;">السلة: 0 منتجات</div>
+    <button class="buy-btn" style="width: auto; padding: 10px 25px;" onclick="sendOrder()">طلب عبر واتساب 💬</button>
 </div>
 
 <script>
@@ -110,19 +134,58 @@
     let cart = [];
     let allProducts = [];
 
+    // جلب المنتجات في الخلفية
     db.ref('products').on('value', (snapshot) => {
         const data = snapshot.val();
         allProducts = [];
         for (let id in data) { allProducts.push(data[id]); }
-        renderProducts(allProducts);
     });
 
-    function renderProducts(products) {
-        const display = document.getElementById('productsDisplay');
+    // دالة فتح القسم
+    function openSection(cat, title) {
+        document.getElementById('sectionTitle').innerText = title;
+        const display = document.getElementById('sectionProducts');
         display.innerHTML = '';
-        products.forEach(p => {
-            display.innerHTML += `
-                <div class="product-card">
-                    <img src="${p.image}">
-                    <h3 style="font-size: 1em;">${p.name}</h3>
-                    <p style="font-size: 0.
+        
+        const filtered = allProducts.filter(p => p.category === cat);
+        
+        if(filtered.length === 0) {
+            display.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px;">قريباً... يتم إضافة المنتجات الملكية لهذا القسم</p>';
+        } else {
+            filtered.forEach(p => {
+                display.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.image}">
+                        <h3>${p.name}</h3>
+                        <p style="font-size: 0.85em; color: #aaa;">${p.description}</p>
+                        <span class="price">${p.price} ريال</span>
+                        <button class="buy-btn" onclick="addToCart('${p.name}', '${p.price}')">أضف للسلة</button>
+                    </div>`;
+            });
+        }
+        
+        document.getElementById('sectionPage').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // منع التمرير في الخلفية
+    }
+
+    // دالة العودة
+    function closeSection() {
+        document.getElementById('sectionPage').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        document.getElementById('cartBar').style.display = 'flex';
+        document.getElementById('cartCount').innerText = `السلة: ${cart.length} منتجات`;
+        alert("تمت الإضافة بنجاح!");
+    }
+
+    function sendOrder() {
+        let msg = "طلب جديد من Omni Store:\n";
+        cart.forEach(i => msg += `- ${i.name} (${i.price} ريال)\n`);
+        window.open(`https://wa.me/966550000000?text=${encodeURIComponent(msg)}`);
+    }
+</script>
+</body>
+</html>
