@@ -2,44 +2,44 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة تحكم OmniStore</title>
+    <title>لوحة تحكم OmniStore الماركة</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         body { font-family: sans-serif; background: #1a1a1a; color: white; padding: 20px; text-align: center; }
-        .card { background: #2d2d2d; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; border: 1px solid #ff4500; }
-        input, select { width: 90%; padding: 12px; margin: 10px 0; border-radius: 5px; border: none; background: #3d3d3d; color: white; }
-        button { background: #ff4500; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; width: 95%; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #ff6a00; }
+        .card { background: #2d2d2d; padding: 20px; border-radius: 10px; max-width: 450px; margin: auto; border: 1px solid #ff4500; }
+        input, select, textarea { width: 90%; padding: 12px; margin: 10px 0; border-radius: 5px; border: none; background: #3d3d3d; color: white; }
+        textarea { height: 80px; resize: none; }
+        button { background: #ff4500; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; width: 95%; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>إضافة منتج لمتجر أومني</h2>
-    <input type="text" id="pName" placeholder="اسم المنتج (مثل: نتفلكس)">
+    <h2>إضافة منتج جديد</h2>
+    <input type="text" id="pName" placeholder="اسم المنتج">
     <input type="number" id="pPrice" placeholder="السعر">
     <input type="text" id="pImg" placeholder="رابط صورة المنتج">
+    <textarea id="pDesc" placeholder="وصف المنتج (سيظهر للزبون)"></textarea>
     
-    <label>اختر القسم المناسب:</label>
+    <label>اختر القائمة الصحيحة:</label>
     <select id="pCategory">
-        <option value="entertainment">قسم الترفيه</option>
-        <option value="games">قسم الألعاب</option>
-        <option value="programs">قسم البرامج</option>
+        <option value="cat1">بطاقات وهدايا واشتراكات اخرى</option>
+        <option value="cat2">دعم السوشال ميديا</option>
+        <option value="cat3">ادوات الذكاء الاصطناعي</option>
+        <option value="cat4">ترفيه بلا حدود</option>
     </select>
 
-    <button onclick="addProduct()">حفظ المنتج في المخزن</button>
+    <button onclick="addProduct()">حفظ المنتج في المتجر</button>
 </div>
 
 <script>
-    // مفتاح الربط الخاص بك الذي استخرجناه سابقاً
     const firebaseConfig = {
       apiKey: "AIzaSyCWkjGbA5gZBqr60Qa98WXsyrDZQJlv07I",
       authDomain: "omnistore-a5251.firebaseapp.com",
       databaseURL: "https://omnistore-a5251-default-rtdb.firebaseio.com",
       projectId: "omnistore-a5251",
       storageBucket: "omnistore-a5251.firebasestorage.app",
-      messagingSenderId: "542087784992",
       appId: "1:542087784992:web:5ed1e7ec4d4a423bc3aa45"
     };
 
@@ -50,20 +50,22 @@
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const img = document.getElementById('pImg').value;
-        const category = document.getElementById('pCategory').value;
+        const desc = document.getElementById('pDesc').value;
+        const cat = document.getElementById('pCategory').value;
 
-        if(name && price && img) {
+        if(name && price && img && desc) {
             db.ref('products').push({
                 name: name,
                 price: price,
                 image: img,
-                category: category
+                description: desc,
+                category: cat
             }).then(() => {
-                alert("تمت إضافة " + name + " بنجاح في " + (category === 'entertainment' ? 'قائمة الترفيه' : 'قسم آخر'));
+                alert("تمت الإضافة بنجاح في القائمة المختارة!");
                 location.reload();
             });
         } else {
-            alert("عبّي البيانات يا بطل");
+            alert("يرجى ملء جميع الخانات بما فيها وصف المنتج");
         }
     }
 </script>
