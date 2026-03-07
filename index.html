@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Omni Store - الفخامة الرقمية</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <style>
         :root { --primary: #c7a13c; --bg: #000; --secondary: #8a2be2; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; overflow-x: hidden; font-family: sans-serif; }
@@ -14,10 +16,10 @@
         .logo-frame { width: 75px; height: 75px; margin: 0 auto; border-radius: 50%; border: 2px solid var(--primary); background: #000; box-shadow: 0 0 15px var(--primary); }
         .logo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
+        /* حاوية الصور */
         .hero-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; }
         
-        /* نظام التبديل التلقائي بين الكمبيوتر والجوال */
         .pc-only { display: block; }
         .mobile-only { display: none; }
 
@@ -26,13 +28,13 @@
             .mobile-only { display: block; }
         }
 
-        /* طبقة اللمس للجوال بناءً على رسمتك */
+        /* طبقة اللمس للجوال */
         .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; display: none; }
         @media (max-width: 600px) { .touch-grid { display: block; } }
 
         .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         
-        /* إحداثيات اللمس الدقيقة */
+        /* إحداثيات اللمس بناءً على الرسمة */
         .btn-red { top: 18%; left: 4%; width: 55%; height: 14%; }
         .btn-green-top { top: 17%; left: 63%; width: 33%; height: 35%; }
         .btn-green-mid { top: 52%; left: 63%; width: 33%; height: 35%; }
@@ -41,6 +43,7 @@
         .btn-social { top: 72%; left: 4%; width: 45%; height: 17%; }
         .btn-cards { top: 72%; left: 51%; width: 45%; height: 17%; }
 
+        /* الأقسام الداخلية */
         .section-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; overflow-y: auto; }
         .section-page.active { display: block; }
         .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; z-index: 1001; }
@@ -56,9 +59,9 @@
 <header><div class="logo-frame"><img src="لوقو متجر اومني .jpeg"></div></header>
 
 <div class="hero-container">
-    <img src="{3DAD454F-02AB-4143-87A2-ADCA181FBD77}.jpg" class="hero-image pc-only">
+    <img src="اومني القائمه الاوله.jpeg" class="hero-image pc-only">
     
-    <img src="صوره القائمه الرئيسيه للجوال.jpeg" class="hero-image mobile-only">
+    <img src="صوره القائمه الرئيسيه للجوال .jpeg" class="hero-image mobile-only">
     
     <div class="touch-grid">
         <button class="btn-red" onclick="openSection('all', 'جميع الخدمات')"></button>
@@ -81,7 +84,7 @@
 
 <div class="cart-bar" id="cartBar">
     <div id="cartCount" style="color:var(--primary); font-weight:bold;">السلة: 0</div>
-    <button style="background:var(--primary); border:none; padding:12px 25px; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="sendOrder()">إرسال الطلب 👑</button>
+    <button style="background:var(--primary); border:none; padding:12px 25px; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="sendOrder()">طلب المنتجات 👑</button>
 </div>
 
 <script>
@@ -97,7 +100,6 @@
     const db = firebase.database();
     let cart = []; let allProducts = [];
 
-    // سحب المنتجات والتأكد من القواعد (القواعد حالياً true وهذا ممتاز)
     db.ref('products').on('value', (snapshot) => {
         const data = snapshot.val();
         allProducts = [];
@@ -136,7 +138,7 @@
     function sendOrder() {
         let msg = "طلب جديد من متجر أومني:\n\n";
         cart.forEach((i, index) => msg += `${index+1}- ${i.name}\n`);
-        // الرقم الخاص بك 0548512295
+        // رقمك الخاص 0548512295
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
     }
 </script>
