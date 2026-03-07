@@ -27,27 +27,24 @@
             .mobile-only { display: block; }
         }
 
-        /* طبقة اللمس - الأزرار فقط فوق المناطق الحمراء */
         .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; pointer-events: none; }
         .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent; }
         
-        /* إحداثيات الأزرار بناءً على رسمك (المناطق الحمراء) */
-        .btn-all-hero { top: 32%; left: 10%; width: 55%; height: 28%; } /* البنر الكبير الأوسط */
-        .btn-ent { bottom: 3%; left: 3%; width: 22%; height: 25%; } /* ترفيه بلا حدود */
-        .btn-ai { bottom: 3%; left: 27%; width: 22%; height: 25%; } /* أدوات الذكاء الاصطناعي */
-        .btn-social { bottom: 3%; left: 51%; width: 22%; height: 25%; } /* دعم السوشال ميديا */
-        .btn-cards { bottom: 3%; left: 75%; width: 22%; height: 25%; } /* بطاقات وهدايا */
+        /* إحداثيات الأزرار (المناطق الحمراء) */
+        .btn-all-hero { top: 32%; left: 10%; width: 55%; height: 28%; }
+        .btn-ent { bottom: 3%; left: 3%; width: 22%; height: 25%; }
+        .btn-ai { bottom: 3%; left: 27%; width: 22%; height: 25%; }
+        .btn-social { bottom: 3%; left: 51%; width: 22%; height: 25%; }
+        .btn-cards { bottom: 3%; left: 75%; width: 22%; height: 25%; }
 
-        /* الدعم الفني - فوق يسار */
         #mainSupport { position: fixed; top: 15px; left: 15px; z-index: 2000; }
         .support-btn { background: #25d366; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; border: 1px solid white; font-size: 12px; }
         .support-menu { display: none; background: #1a1a1a; border: 1px solid var(--primary); border-radius: 8px; margin-top: 5px; width: 150px; }
         .support-menu button { width: 100%; background: none; border: none; color: white; padding: 10px; text-align: right; cursor: pointer; border-bottom: 1px solid #333; font-size: 13px; }
 
-        /* الأقسام والسلة */
         .section-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; overflow-y: auto; }
         .section-page.active { display: block; }
-        .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; z-index: 1501; }
+        .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 15px; padding-bottom: 120px; }
         .product-card { background: #161616; border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #222; }
         .product-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; }
@@ -151,12 +148,12 @@
     }
 
     function sendSupport(type) {
-        window.open(`https://wa.me/966548512295?text=${encodeURIComponent("لدي " + type)}`);
+        window.open(`https://wa.me/966548512295?text=${encodeURIComponent("أهلاً أومني ستور، لدي " + type)}`);
         toggleSupport();
     }
 
     function sendOrder() {
-        let msg = "طلب جديد:\n";
+        let msg = "طلب جديد من متجر أومني:\n";
         cart.forEach((i, index) => msg += `${index+1}- ${i.name}\n`);
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
     }
