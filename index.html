@@ -12,15 +12,15 @@
         :root { --primary: #c7a13c; --bg: #000; --secondary: #8a2be2; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; overflow-x: hidden; font-family: sans-serif; }
         
+        /* التنسيقات الأساسية */
         header { position: absolute; top: 2%; width: 100%; z-index: 200; text-align: center; pointer-events: none; }
         .logo-frame { width: 75px; height: 75px; margin: 0 auto; border-radius: 50%; border: 2px solid var(--primary); background: #000; box-shadow: 0 0 15px var(--primary); }
         .logo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-        /* حاوية الصور */
         .hero-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; }
         
-        .pc-only { display: block; }
+        .pc-only { display: block; cursor: pointer; }
         .mobile-only { display: none; }
 
         @media (max-width: 600px) {
@@ -29,12 +29,9 @@
         }
 
         /* طبقة اللمس للجوال */
-        .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; display: none; }
-        @media (max-width: 600px) { .touch-grid { display: block; } }
-
+        .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; }
         .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         
-        /* إحداثيات اللمس بناءً على الرسمة */
         .btn-red { top: 18%; left: 4%; width: 55%; height: 14%; }
         .btn-green-top { top: 17%; left: 63%; width: 33%; height: 35%; }
         .btn-green-mid { top: 52%; left: 63%; width: 33%; height: 35%; }
@@ -43,7 +40,13 @@
         .btn-social { top: 72%; left: 4%; width: 45%; height: 17%; }
         .btn-cards { top: 72%; left: 51%; width: 45%; height: 17%; }
 
-        /* الأقسام الداخلية */
+        /* زر الدعم الفني الجديد */
+        .support-btn { position: fixed; bottom: 20px; left: 20px; background: #25d366; color: white; padding: 12px 20px; border-radius: 50px; font-weight: bold; z-index: 2000; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .support-menu { display: none; position: fixed; bottom: 80px; left: 20px; background: #1a1a1a; border: 1px solid var(--primary); border-radius: 10px; z-index: 2000; padding: 10px; width: 200px; }
+        .support-menu button { width: 100%; background: none; border: none; color: white; padding: 10px; text-align: right; cursor: pointer; border-bottom: 1px solid #333; }
+        .support-menu button:last-child { border-bottom: none; }
+
+        /* الأقسام */
         .section-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; overflow-y: auto; }
         .section-page.active { display: block; }
         .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; z-index: 1001; }
@@ -59,19 +62,28 @@
 <header><div class="logo-frame"><img src="لوقو متجر اومني .jpeg"></div></header>
 
 <div class="hero-container">
-    <img src="اومني القائمه الاوله.jpeg" class="hero-image pc-only">
-    
-    <img src="صوره القائمه الرئيسيه للجوال .jpeg" class="hero-image mobile-only">
-    
-    <div class="touch-grid">
-        <button class="btn-red" onclick="openSection('all', 'جميع الخدمات')"></button>
-        <button class="btn-green-top" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
-        <button class="btn-green-mid" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
-        <button class="btn-ent-box" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
-        <button class="btn-ai-box" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
-        <button class="btn-social" onclick="openSection('social', 'دعم السوشال ميديا')"></button>
-        <button class="btn-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></button>
+    <div class="pc-only" onclick="openSection('all', 'جميع الخدمات')">
+        <img src="اومني القائمه الاوله.jpeg" class="hero-image">
     </div>
+    
+    <div class="mobile-only" style="width:100%; height:100%;">
+        <img src="صوره القائمه الرئيسيه للجوال .jpeg" class="hero-image">
+        <div class="touch-grid">
+            <button class="btn-red" onclick="openSection('all', 'جميع الخدمات')"></button>
+            <button class="btn-green-top" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
+            <button class="btn-green-mid" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
+            <button class="btn-ent-box" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
+            <button class="btn-ai-box" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
+            <button class="btn-social" onclick="openSection('social', 'دعم السوشال ميديا')"></button>
+            <button class="btn-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></button>
+        </div>
+    </div>
+</div>
+
+<div class="support-btn" onclick="toggleSupport()">الدعم الفني 💬</div>
+<div class="support-menu" id="supportMenu">
+    <button onclick="sendSupport('استفسار عام')">❓ استفسار عام</button>
+    <button onclick="sendSupport('مشكلة في طلبي')">⚠️ مشكلة في طلبي</button>
 </div>
 
 <div class="section-page" id="sectionPage">
@@ -111,20 +123,9 @@
         const display = document.getElementById('sectionProducts');
         display.innerHTML = '';
         const filtered = (cat === 'all') ? allProducts : allProducts.filter(p => p.category === cat);
-        
-        if (filtered.length === 0) {
-            display.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:40px;">لا يوجد منتجات حالياً.</p>';
-        } else {
-            filtered.forEach(p => {
-                display.innerHTML += `
-                    <div class="product-card">
-                        <img src="${p.image}">
-                        <h4 style="margin:10px 0; font-size:0.9em;">${p.name}</h4>
-                        <p style="color:var(--primary)">${p.price} ريال</p>
-                        <button style="width:100%; padding:8px; background:var(--secondary); color:white; border:none; border-radius:5px; cursor:pointer;" onclick="addToCart('${p.name}', '${p.price}')">إضافة</button>
-                    </div>`;
-            });
-        }
+        filtered.forEach(p => {
+            display.innerHTML += `<div class="product-card"><img src="${p.image}"><h4 style="font-size:0.9em;">${p.name}</h4><p style="color:var(--primary)">${p.price} ريال</p><button style="width:100%; padding:8px; background:var(--secondary); color:white; border:none; border-radius:5px; cursor:pointer;" onclick="addToCart('${p.name}', '${p.price}')">إضافة</button></div>`;
+        });
         document.getElementById('sectionPage').classList.add('active');
     }
 
@@ -135,10 +136,21 @@
         document.getElementById('cartCount').innerText = `السلة: ${cart.length}`;
     }
 
+    // وظائف الدعم الفني
+    function toggleSupport() {
+        const menu = document.getElementById('supportMenu');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function sendSupport(type) {
+        const msg = `مرحباً أومني ستور، أريد تقديم طلب ${type}`;
+        window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
+        toggleSupport();
+    }
+
     function sendOrder() {
         let msg = "طلب جديد من متجر أومني:\n\n";
         cart.forEach((i, index) => msg += `${index+1}- ${i.name}\n`);
-        // رقمك الخاص 0548512295
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
     }
 </script>
