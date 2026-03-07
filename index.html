@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر أومني - النسخة النهائية</title>
+    <title>متجر أومني - Omni Store</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -12,35 +12,43 @@
         :root { --gold: #c7a13c; --black: #000; --dark: #121212; --gray: #252525; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--black); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
 
-        /* 1. شاشة الدخول */
+        /* شاشة الدخول */
         #authOverlay { position: fixed; inset: 0; background: var(--black); z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: var(--dark); padding: 40px 30px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; text-align: center; }
         .login-box img { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 20px; }
         .login-box input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 12px; text-align: center; outline: none; box-sizing: border-box; }
         .login-box button { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; color: #000; }
 
-        /* 2. السلة العائمة (يجب أن تظهر فوق كل شيء) */
+        /* السلة العائمة (تظهر فوق كل شيء) */
         #floatingCart { position: fixed; bottom: 30px; left: 25px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 88888; cursor: pointer; box-shadow: 0 5px 20px rgba(199, 161, 60, 0.4); transition: 0.3s; }
         .cart-count { position: absolute; top: -5px; right: -5px; background: #ff0000; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid #000; }
 
-        /* 3. زر الترس والقائمة الجانبية */
+        /* زر الترس */
         #settingsBtn { position: fixed; top: 25px; right: 25px; width: 50px; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 77777; cursor: pointer; font-size: 24px; }
         
-        #sideMenu { position: fixed; top: 0; right: -350px; width: 300px; height: 100%; background: var(--dark); z-index: 90000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 30px 20px; box-sizing: border-box; border-left: 3px solid var(--gold); }
+        /* القائمة الجانبية المحدثة */
+        #sideMenu { position: fixed; top: 0; right: -350px; width: 300px; height: 100%; background: var(--dark); z-index: 95000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-sizing: border-box; border-left: 3px solid var(--gold); box-shadow: -10px 0 30px rgba(0,0,0,0.8); }
         #sideMenu.active { right: 0; }
-        .menu-logo { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); display: block; margin: 0 auto 10px; }
-        .user-name { text-align: center; color: var(--gold); font-weight: bold; margin-bottom: 25px; font-size: 18px; }
-        .menu-item { padding: 15px; border-radius: 12px; margin-bottom: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; transition: 0.2s; }
-        .menu-item:hover { background: #1a1a1a; color: var(--gold); }
-        .logout-btn { color: #ff4d4d !important; margin-top: 30px; border: 1px solid #ff4d4d55; }
+        
+        /* زر إغلاق الترس (X) */
+        .close-menu-btn { position: absolute; top: 20px; left: 20px; background: var(--gray); border: 1px solid var(--gold); color: var(--gold); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 18px; }
 
-        /* 4. الصور الرئيسية والتحكم */
+        .menu-logo { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); display: block; margin: 40px auto 10px; }
+        .user-name { text-align: center; color: var(--gold); font-weight: bold; margin-bottom: 25px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .menu-item { padding: 15px; border-radius: 12px; margin-bottom: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; transition: 0.2s; }
+        .menu-item:active { background: #1a1a1a; transform: scale(0.95); }
+        .logout-btn { color: #ff4d4d !important; margin-top: 30px; }
+
+        /* خلفية التعتيم عند فتح القائمة */
+        #menuOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 94000; display: none; }
+
+        /* الرئيسية */
         .hero { width: 100vw; height: 100vh; position: relative; cursor: pointer; overflow: hidden; }
         .hero img { width: 100%; height: 100%; object-fit: cover; }
         .clickable-area { position: absolute; inset: 0; z-index: 10; }
         .grid-btn { position: absolute; z-index: 20; background: transparent; border: none; cursor: pointer; }
 
-        /* 5. الصفحات الداخلية */
+        /* الصفحات */
         .page { display: none; position: fixed; inset: 0; background: var(--black); z-index: 80000; overflow-y: auto; padding-bottom: 100px; }
         .header { position: sticky; top: 0; background: var(--dark); padding: 20px; border-bottom: 2px solid var(--gold); display: flex; align-items: center; z-index: 80001; }
         .back-btn { background: var(--gold); color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; margin-left: 20px; cursor: pointer; }
@@ -52,12 +60,13 @@
         .review-box { padding: 20px; }
         .review-input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--gold); color: white; border-radius: 15px; margin-bottom: 15px; height: 100px; outline: none; }
 
-        /* التجاوب */
         .pc-v { display: block; } .mob-v { display: none; }
         @media (max-width: 768px) { .pc-v { display: none; } .mob-v { display: block; } }
     </style>
 </head>
 <body>
+
+<div id="menuOverlay" onclick="toggleMenu()"></div>
 
 <div id="authOverlay">
     <div class="login-box">
@@ -76,6 +85,7 @@
 </div>
 
 <div id="sideMenu">
+    <div class="close-menu-btn" onclick="toggleMenu()">✕</div>
     <img src="لوقو متجر اومني .jpeg" class="menu-logo">
     <div class="user-name" id="displayUser">أهلاً بك</div>
     
@@ -87,8 +97,6 @@
     <hr style="border: 0.5px solid #333; margin: 15px 0;">
     <div class="menu-item" onclick="openPage('reviewsPage')">⭐ تقييمات العملاء</div>
     <div class="menu-item logout-btn" onclick="logout()">🚪 تسجيل الخروج</div>
-    
-    <button onclick="toggleMenu()" style="width:100%; margin-top:20px; padding:10px; background:#333; color:#fff; border:none; border-radius:8px;">إغلاق</button>
 </div>
 
 <div class="hero mob-v">
@@ -118,7 +126,7 @@
     <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 style="color:var(--gold); margin:0;">سلة طلباتك</h3></div>
     <div id="cartGrid"></div>
     <div style="position:fixed; bottom:0; width:100%; background:var(--dark); padding:20px; border-top:2px solid var(--gold); box-sizing:border-box;">
-        <button onclick="sendOrder()" style="width:100%; padding:18px; background:var(--gold); border:none; border-radius:12px; font-weight:bold; font-size:18px;">إرسال الطلب عبر واتساب 🚀</button>
+        <button onclick="sendOrder()" style="width:100%; padding:18px; background:var(--gold); border:none; border-radius:12px; font-weight:bold; font-size:18px; color:#000;">إرسال الطلب واتساب 🚀</button>
     </div>
 </div>
 
@@ -132,7 +140,6 @@
 </div>
 
 <script>
-    // تكوين Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCWkjGbA5gZBqr60Qa98WXsyrDZQJlv07I",
       authDomain: "omnistore-a5251.firebaseapp.com",
@@ -147,15 +154,12 @@
     let myCart = [];
     let allProducts = [];
 
-    // التحقق من الجلسة عند التحميل
     window.onload = () => {
         const user = localStorage.getItem('omni_user');
         if(user) {
             document.getElementById('authOverlay').style.display = 'none';
             document.getElementById('displayUser').innerText = "مرحباً، " + user;
         }
-        
-        // جلب المنتجات والتقييمات
         db.ref('products').on('value', s => { allProducts = Object.values(s.val() || {}); });
         db.ref('reviews').on('value', s => {
             const list = document.getElementById('revList');
@@ -173,18 +177,22 @@
             db.ref('users/'+p).set({name: n, phone: p});
             localStorage.setItem('omni_user', n);
             location.reload();
-        } else { alert("يرجى إكمال البيانات"); }
+        }
     }
 
+    // دالة فتح/إغلاق الترس
     function toggleMenu() {
-        document.getElementById('sideMenu').classList.toggle('active');
+        const menu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        menu.classList.toggle('active');
+        overlay.style.display = menu.classList.contains('active') ? 'block' : 'none';
     }
 
     function openPage(id) {
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
         document.getElementById(id).style.display = 'block';
         document.getElementById('sideMenu').classList.remove('active');
-        // إخفاء السلة فقط داخل صفحة السلة
+        document.getElementById('menuOverlay').style.display = 'none';
         document.getElementById('floatingCart').style.display = (id === 'cartPage') ? 'none' : 'flex';
     }
 
@@ -198,13 +206,9 @@
         const grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
         const items = (cat === 'all') ? allProducts : allProducts.filter(p => p.category === cat);
-        
         items.forEach(p => {
-            grid.innerHTML += `
-                <div class="card">
-                    <div><b>${p.name}</b><br><span style="color:var(--gold)">${p.price} ريال</span></div>
-                    <button class="add-btn" onclick="addToCart('${p.name}', ${p.price})">إضافة +</button>
-                </div>`;
+            grid.innerHTML += `<div class="card"><div><b>${p.name}</b><br><span style="color:var(--gold)">${p.price} ريال</span></div>
+            <button class="add-btn" onclick="addToCart('${p.name}', ${p.price})">إضافة +</button></div>`;
         });
         openPage('productsPage');
     }
@@ -213,7 +217,6 @@
         myCart.push({n, p});
         document.getElementById('cartBadge').innerText = myCart.length;
         updateCartList();
-        // تأثير نبض للسلة
         const btn = document.getElementById('floatingCart');
         btn.style.transform = 'scale(1.2)';
         setTimeout(() => btn.style.transform = 'scale(1)', 200);
