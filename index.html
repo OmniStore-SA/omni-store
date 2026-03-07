@@ -3,48 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omni Store - عالمك الرقمي الملكي</title>
+    <title>Omni Store - الفخامة الرقمية</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        /* الألوان الجديدة: أسود، ذهبي، بنفسجي */
-        :root { --primary: #c7a13c; --secondary: #8a2be2; --bg: #0a0a0a; --card: #1a1a1a; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: white; margin: 0; padding-bottom: 80px; }
-        header { text-align: center; padding: 30px; background: linear-gradient(135deg, #1a1a1a, #000); border-bottom: 2px solid var(--primary); box-shadow: 0 5px 15px rgba(199, 161, 60, 0.2); }
-        header h1 { color: var(--primary); margin: 0; font-size: 2.5em; text-transform: uppercase; letter-spacing: 2px; }
+        :root { --primary: #c7a13c; --secondary: #8a2be2; --bg: #0a0a0a; }
+        
+        /* أنميشن دخول المتجر القديم الجميل */
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 80px;
+            animation: fadeInScale 1.2s ease-out; /* تطبيق الأنميشن */
+        }
+
+        header { text-align: center; padding: 20px; background: #000; border-bottom: 2px solid var(--primary); }
+        
+        /* تنسيق الصورة الكبيرة التفاعلية */
+        .hero-container {
+            width: 95%;
+            max-width: 1000px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(199, 161, 60, 0.4);
+        }
+
+        .hero-image { width: 100%; display: block; }
+
+        /* مناطق الضغط الشفافة فوق الصورة */
+        .map-overlay {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%; /* تغطية منطقة القوائم الأربعة في أسفل الصورة */
+            display: flex;
+        }
+        .map-area { flex: 1; cursor: pointer; transition: 0.3s; }
+        .map-area:hover { background: rgba(138, 43, 226, 0.1); }
+
         .tabs { display: flex; overflow-x: auto; gap: 10px; padding: 15px; background: #111; border-bottom: 1px solid #222; }
-        .tab-btn { background: var(--card); border: 1px solid #333; color: white; padding: 10px 18px; cursor: pointer; border-radius: 20px; white-space: nowrap; font-size: 14px; transition: 0.3s; }
-        .tab-btn.active { background: linear-gradient(45deg, var(--secondary), var(--primary)); border-color: var(--primary); font-weight: bold; box-shadow: 0 0 10px rgba(199, 161, 60, 0.4); }
+        .tab-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 10px 18px; cursor: pointer; border-radius: 20px; white-space: nowrap; }
+        .tab-btn.active { background: linear-gradient(45deg, var(--secondary), var(--primary)); border-color: var(--primary); }
+
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-        .product-card { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; position: relative; transition: 0.3s; }
-        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(199, 161, 60, 0.2); }
-        .product-card img { width: 100%; border-radius: 8px; height: 110px; object-fit: cover; border-bottom: 1px solid #222; }
-        .product-card h3 { color: #fff; font-size: 1.1em; margin: 10px 0 5px 0; }
-        .desc { font-size: 0.85em; color: #bbb; margin: 0 0 10px 0; min-height: 40px; line-height: 1.4; }
-        .price { color: var(--primary); font-weight: bold; font-size: 1.2em; margin-bottom: 10px; display: block; }
-        .buy-btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .buy-btn:hover { opacity: 0.9; }
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; box-sizing: border-box; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); z-index: 1000; }
-        #cartCount { color: var(--primary); font-weight: bold; font-size: 1.1em; }
+        .product-card { background: #161616; border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; transition: 0.3s; }
+        .product-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .product-card img { width: 100%; border-radius: 8px; height: 110px; object-fit: cover; }
+        .price { color: var(--primary); font-weight: bold; display: block; margin: 10px 0; }
+        .buy-btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 1000; }
     </style>
 </head>
 <body>
 
-<header><h1>OMNI STORE</h1></header>
+<header>
+    <img src="jpeg لوزو متجر اومني.jpeg" alt="Logo" style="height: 60px;">
+</header>
 
-<div class="tabs">
+<div class="hero-container" id="mainHero">
+    <img src="اومني القائمه الاوله.jpeg" class="hero-image" alt="Main Banner">
+    <div class="map-overlay">
+        <div class="map-area" onclick="filterItems('entertainment')" title="ترفيه بلا حدود"></div>
+        <div class="map-area" onclick="filterItems('ai')" title="أدوات الذكاء الاصطناعي"></div>
+        <div class="map-area" onclick="filterItems('social')" title="دعم السوشال ميديا"></div>
+        <div class="map-area" onclick="filterItems('cards')" title="بطاقات وهدايا"></div>
+    </div>
+</div>
+
+<div class="tabs" id="tabsBar">
     <button class="tab-btn active" onclick="filterItems('all')">الكل</button>
-    <button class="tab-btn" onclick="filterItems('cards')">بطاقات وهدايا واشتراكات اخرى</button>
-    <button class="tab-btn" onclick="filterItems('social')">دعم سوشل ميديا</button>
-    <button class="tab-btn" onclick="filterItems('ai')">ادوات الذكاء الاصطناعي</button>
-    <button class="tab-btn" onclick="filterItems('entertainment')">ترفيه بلا حدود</button>
+    <button class="tab-btn" id="btn-cards" onclick="filterItems('cards')">بطاقات وهدايا</button>
+    <button class="tab-btn" id="btn-social" onclick="filterItems('social')">دعم سوشل ميديا</button>
+    <button class="tab-btn" id="btn-ai" onclick="filterItems('ai')">ادوات الذكاء الاصطناعي</button>
+    <button class="tab-btn" id="btn-entertainment" onclick="filterItems('entertainment')">ترفيه بلا حدود</button>
 </div>
 
 <div class="products-grid" id="productsDisplay"></div>
 
 <div class="cart-bar" id="cartBar">
-    <div id="cartCount">السلة: 0 منتجات</div>
-    <button class="buy-btn" style="width: auto; padding: 10px 20px;" onclick="sendOrder()">إتمام الطلب الملكي 👑</button>
+    <div id="cartCount" style="color: var(--primary); font-weight: bold;">السلة: 0</div>
+    <button class="buy-btn" style="width: auto; padding: 10px 25px;" onclick="sendOrder()">إتمام الطلب الملكي 👑</button>
 </div>
 
 <script>
@@ -62,13 +110,10 @@
     let cart = [];
     let allProducts = [];
 
-    // جلب البيانات وإظلاح مشكلة العرض
     db.ref('products').on('value', (snapshot) => {
         const data = snapshot.val();
         allProducts = [];
-        for (let id in data) {
-            allProducts.push(data[id]);
-        }
+        for (let id in data) { allProducts.push(data[id]); }
         renderProducts(allProducts);
     });
 
@@ -79,37 +124,5 @@
             display.innerHTML += `
                 <div class="product-card">
                     <img src="${p.image}">
-                    <h3>${p.name}</h3>
-                    <p class="desc">${p.description}</p>
-                    <span class="price">${p.price} ريال</span>
-                    <button class="buy-btn" onclick="addToCart('${p.name}', '${p.price}')">أضف للعرش</button>
-                </div>
-            `;
-        });
-    }
-
-    function filterItems(cat) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        if(cat === 'all') return renderProducts(allProducts);
-        const filtered = allProducts.filter(p => p.category === cat);
-        renderProducts(filtered);
-    }
-
-    function addToCart(name, price) {
-        cart.push({name, price});
-        document.getElementById('cartBar').style.display = 'flex';
-        document.getElementById('cartCount').innerText = `السلة: ${cart.length} منتجات`;
-        alert("تمت إضافة " + name + " لسلة المشتريات الملكية");
-    }
-
-    function sendOrder() {
-        let msg = "طلب ملكي جديد من متجر أومني:\n";
-        cart.forEach(item => {
-            msg += `- ${item.name} (${item.price} ريال)\n`;
-        });
-        window.open(`https://wa.me/966550000000?text=${encodeURIComponent(msg)}`); // استبدل الرقم برقمك
-    }
-</script>
-</body>
-</html>
+                    <h3 style="font-size: 1em;">${p.name}</h3>
+                    <p style="font-size: 0.
