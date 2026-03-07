@@ -9,91 +9,103 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --primary: #c7a13c; --bg: #000; --secondary: #8a2be2; }
+        :root { --primary: #c7a13c; --bg: #000; --secondary: #8a2be2; --card-bg: #161616; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; overflow-x: hidden; font-family: sans-serif; }
         
+        /* شاشة الدخول */
+        #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: #111; padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 85%; max-width: 350px; text-align: center; }
+        .login-card input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; text-align: center; box-sizing: border-box; }
+
+        /* القائمة الجانبية (الترس) */
+        #sideMenu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #111; z-index: 3000; transition: 0.4s; padding: 20px; box-sizing: border-box; border-left: 2px solid var(--primary); }
+        #sideMenu.active { right: 0; }
+        .menu-item { padding: 15px; border-bottom: 1px solid #222; cursor: pointer; color: var(--primary); font-weight: bold; }
+
+        /* السلة المتطورة */
+        .cart-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2500; padding: 20px; box-sizing: border-box; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+        
+        /* التقييمات */
+        .reviews-section { padding: 20px; background: #0a0a0a; margin-top: 20px; }
+        .review-card { background: #161616; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-right: 3px solid var(--primary); }
+
+        /* ستايلات ثابتة */
         .hero-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; }
-        
-        .pc-only { display: block; }
-        .mobile-only { display: none; }
-
-        @media (max-width: 600px) {
-            .pc-only { display: none; }
-            .mobile-only { display: block; }
-        }
-
-        /* طبقة اللمس - الأزرار فقط */
         .touch-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; pointer-events: none; }
-        .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent; }
+        .touch-grid button { position: absolute; background: transparent; border: none; cursor: pointer; pointer-events: auto; }
         
-        /* إحداثيات الكمبيوتر (أفقي) */
-        .pc-only .btn-all { top: 32%; left: 5%; width: 60%; height: 30%; }
-        .pc-only .btn-ent { bottom: 5%; left: 3%; width: 22%; height: 25%; }
-        .pc-only .btn-ai { bottom: 5%; left: 27%; width: 22%; height: 25%; }
-        .pc-only .btn-social { bottom: 5%; left: 51%; width: 22%; height: 25%; }
-        .pc-only .btn-cards { bottom: 5%; left: 75%; width: 22%; height: 25%; }
+        .pc-only { display: block; } .mobile-only { display: none; }
+        @media (max-width: 600px) { .pc-only { display: none; } .mobile-only { display: block; } }
 
-        /* إحداثيات الجوال (عمودي) بناءً على صورتك الجديدة */
-        .mobile-only .btn-all { top: 18%; left: 5%; width: 90%; height: 15%; } /* استكشف الخدمات */
-        .mobile-only .btn-ent { top: 35%; left: 5%; width: 45%; height: 18%; } /* ترفيه */
-        .mobile-only .btn-ai { top: 55%; left: 5%; width: 45%; height: 18%; } /* ذكاء اصطناعي */
-        .mobile-only .btn-social { top: 73%; left: 5%; width: 45%; height: 18%; } /* سوشال ميديا */
-        .mobile-only .btn-cards { top: 73%; left: 52%; width: 45%; height: 18%; } /* بطاقات */
-
-        #mainSupport { position: fixed; top: 15px; left: 15px; z-index: 2000; }
-        .support-btn { background: #25d366; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; border: 1px solid white; font-size: 13px; }
-
+        #settingsBtn { position: fixed; top: 15px; right: 15px; z-index: 4000; font-size: 25px; cursor: pointer; background: rgba(0,0,0,0.5); border-radius: 50%; padding: 5px; }
         .section-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; overflow-y: auto; }
         .section-page.active { display: block; }
-        .section-header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; align-items: center; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 15px; padding-bottom: 120px; }
-        .product-card { background: #161616; border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #222; }
-        .product-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; }
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 20px; border-top: 2px solid var(--primary); display: none; justify-content: space-between; align-items: center; z-index: 1600; box-sizing: border-box; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 15px; }
     </style>
 </head>
 <body>
 
-<div id="mainSupport">
-    <div class="support-btn" onclick="window.open('https://wa.me/966548512295')">الدعم الفني 💬</div>
+<div id="authOverlay">
+    <div class="login-card">
+        <h2 style="color:var(--primary)">أومني ستور</h2>
+        <input type="text" id="regName" placeholder="الاسم الكريم">
+        <input type="tel" id="regPhone" placeholder="رقم الجوال">
+        <button onclick="saveUser()" style="width:100%; padding:12px; background:var(--primary); border:none; border-radius:8px; font-weight:bold;">دخول</button>
+    </div>
+</div>
+
+<div id="settingsBtn" onclick="toggleMenu()">⚙️</div>
+
+<div id="sideMenu">
+    <h2 style="color:var(--primary)">القائمة</h2>
+    <div class="menu-item" onclick="openSection('all', 'كل الخدمات')">🏠 الرئيسية</div>
+    <div class="menu-item" onclick="openSection('ai', 'ذكاء اصطناعي')">🤖 ذكاء اصطناعي</div>
+    <div class="menu-item" onclick="openSection('entertainment', 'ترفيه')">🎬 ترفيه</div>
+    <div class="menu-item" onclick="toggleCart()">🛒 السلة</div>
+    <div class="menu-item" onclick="window.open('https://wa.me/966548512295')">📞 الدعم الفني</div>
+    <div style="margin-top:20px;">
+        <p>تابعنا:</p>
+        <span onclick="window.open('https://t.me/DhikrNow')" style="cursor:pointer">📢 تيليجرام</span>
+    </div>
 </div>
 
 <div class="hero-container">
-    <div class="pc-only" style="height: 100%;">
-        <img src="اومني القائمه الاوله.jpeg" class="hero-image">
-        <div class="touch-grid">
-            <button class="btn-all" onclick="openSection('all', 'جميع الخدمات')"></button>
-            <button class="btn-ent" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
-            <button class="btn-ai" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
-            <button class="btn-social" onclick="openSection('social', 'دعم السوشال ميديا')"></button>
-            <button class="btn-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></button>
-        </div>
-    </div>
-    
     <div class="mobile-only" style="height: 100%;">
         <img src="صوره القائمه الرئيسيه للجوال.jpeg" class="hero-image">
         <div class="touch-grid">
-            <button class="btn-all" onclick="openSection('all', 'جميع الخدمات')"></button>
-            <button class="btn-ent" onclick="openSection('entertainment', 'ترفيه بلا حدود')"></button>
-            <button class="btn-ai" onclick="openSection('ai', 'أدوات الذكاء الاصطناعي')"></button>
-            <button class="btn-social" onclick="openSection('social', 'دعم السوشال ميديا')"></button>
-            <button class="btn-cards" onclick="openSection('cards', 'بطاقات وهدايا')"></button>
+            <button style="top:18%; left:5%; width:90%; height:15%;" onclick="openSection('all', 'جميع الخدمات')"></button>
+            <button style="top:35%; left:5%; width:45%; height:18%;" onclick="openSection('entertainment', 'ترفيه')"></button>
+            <button style="top:55%; left:5%; width:45%; height:18%;" onclick="openSection('ai', 'ذكاء اصطناعي')"></button>
         </div>
     </div>
 </div>
 
 <div class="section-page" id="sectionPage">
-    <div class="section-header">
-        <button style="background:var(--primary); border:none; padding:10px 18px; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="closeSection()">🔙 عودة</button>
-        <h2 id="sectionTitle" style="margin-right:15px; color:var(--primary); font-size:1em;"></h2>
+    <div style="padding:15px; background:#111; display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="closeSection()" style="background:var(--primary); border:none; padding:8px 15px; border-radius:5px;">🔙 عودة</button>
+        <h3 id="sectionTitle" style="color:var(--primary); margin:0;"></h3>
+        <button onclick="toggleCart()" style="background:#222; border:none; padding:8px; border-radius:5px;">🛒</button>
     </div>
     <div class="products-grid" id="sectionProducts"></div>
+    
+    <div class="reviews-section">
+        <h4>آراء العملاء ⭐</h4>
+        <div id="reviewsList"></div>
+        <input type="text" id="revText" placeholder="اكتب تقييمك هنا..." style="width:70%; background:#111; border:1px solid #333; color:white; padding:10px;">
+        <button onclick="addReview()" style="padding:10px; background:var(--primary); border:none;">نشر</button>
+    </div>
 </div>
 
-<div class="cart-bar" id="cartBar">
-    <div id="cartCount" style="color:var(--primary); font-weight:bold;">السلة: 0</div>
-    <button style="background:var(--primary); border:none; padding:12px 25px; border-radius:5px; font-weight:bold; cursor:pointer;" onclick="sendOrder()">طلب المنتجات 👑</button>
+<div class="cart-page" id="cartPage">
+    <h2 style="color:var(--primary)">سلة الطلبات</h2>
+    <div id="cartItemsList"></div>
+    <hr>
+    <div style="display:flex; justify-content:space-between; padding:20px;">
+        <button onclick="toggleCart()" style="background:#444; border:none; padding:10px 20px; color:white;">إغلاق</button>
+        <button onclick="sendOrder()" style="background:var(--primary); border:none; padding:10px 20px; font-weight:bold;">تأكيد الطلب عبر واتساب</button>
+    </div>
 </div>
 
 <script>
@@ -107,41 +119,113 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
     let cart = []; let allProducts = [];
 
-    db.ref('products').on('value', (snapshot) => {
-        const data = snapshot.val();
-        allProducts = [];
-        for (let id in data) { allProducts.push(data[id]); }
-    });
+    // نظام الدخول
+    function saveUser() {
+        const name = document.getElementById('regName').value;
+        const phone = document.getElementById('regPhone').value;
+        if(name && phone) {
+            db.ref('users/' + phone).set({name, phone});
+            localStorage.setItem('omni_user', phone);
+            document.getElementById('authOverlay').style.display = 'none';
+        }
+    }
+
+    window.onload = () => {
+        if(localStorage.getItem('omni_user')) document.getElementById('authOverlay').style.display = 'none';
+        loadProducts();
+        loadReviews();
+    };
+
+    function loadProducts() {
+        db.ref('products').on('value', (s) => {
+            const data = s.val(); allProducts = [];
+            for(let id in data) allProducts.push(data[id]);
+        });
+    }
+
+    function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
 
     function openSection(cat, title) {
+        toggleMenu();
         document.getElementById('sectionTitle').innerText = title;
         const display = document.getElementById('sectionProducts');
         display.innerHTML = '';
         const filtered = (cat === 'all') ? allProducts : allProducts.filter(p => p.category === cat);
         filtered.forEach(p => {
-            display.innerHTML += `<div class="product-card"><img src="${p.image}"><h4>${p.name}</h4><p style="color:var(--primary)">${p.price} ريال</p><button style="width:100%; padding:8px; background:var(--secondary); color:white; border:none; border-radius:5px;" onclick="addToCart('${p.name}', '${p.price}')">إضافة</button></div>`;
+            display.innerHTML += `
+                <div class="product-card" style="background:#161616; padding:10px; border-radius:10px; text-align:center;">
+                    <img src="${p.image}" style="width:100%; height:100px; object-fit:cover;">
+                    <h4>${p.name}</h4>
+                    <p style="color:var(--primary)">${p.price} ريال</p>
+                    <button onclick="addToCart('${p.name}', ${p.price})" style="width:100%; padding:8px; background:var(--secondary); color:white; border:none; border-radius:5px;">إضافة للسلة</button>
+                </div>`;
         });
         document.getElementById('sectionPage').classList.add('active');
-        document.getElementById('mainSupport').style.display = 'none';
     }
 
-    function closeSection() { 
-        document.getElementById('sectionPage').classList.remove('active');
-        document.getElementById('mainSupport').style.display = 'block';
-    }
-    
+    function closeSection() { document.getElementById('sectionPage').classList.remove('active'); }
+
+    // إدارة السلة
     function addToCart(name, price) {
-        cart.push({name, price});
-        document.getElementById('cartBar').style.display = 'flex';
-        document.getElementById('cartCount').innerText = `السلة: ${cart.length}`;
+        const existing = cart.find(i => i.name === name);
+        if(existing) { existing.qty++; } else { cart.push({name, price, qty: 1}); }
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const list = document.getElementById('cartItemsList');
+        list.innerHTML = '';
+        cart.forEach((item, index) => {
+            list.innerHTML += `
+                <div class="cart-item">
+                    <span>${item.name} (${item.qty})</span>
+                    <div>
+                        <button onclick="changeQty(${index}, 1)" style="background:green; color:white; border:none; border-radius:5px; padding:5px 10px;">+</button>
+                        <button onclick="changeQty(${index}, -1)" style="background:red; color:white; border:none; border-radius:5px; padding:5px 10px;">-</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function changeQty(index, val) {
+        cart[index].qty += val;
+        if(cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function toggleCart() {
+        const cp = document.getElementById('cartPage');
+        cp.style.display = (cp.style.display === 'block') ? 'none' : 'block';
+        toggleMenu();
     }
 
     function sendOrder() {
-        let msg = "طلب جديد من متجر أومني:\n";
-        cart.forEach((i, index) => msg += `${index+1}- ${i.name}\n`);
+        let msg = "طلب جديد من أومني:\n";
+        cart.forEach(i => msg += `- ${i.name} (عدد: ${i.qty})\n`);
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(msg)}`);
+    }
+
+    // التقييمات
+    function addReview() {
+        const txt = document.getElementById('revText').value;
+        if(txt) {
+            db.ref('reviews').push({text: txt, date: new Date().toLocaleDateString()});
+            document.getElementById('revText').value = '';
+        }
+    }
+
+    function loadReviews() {
+        db.ref('reviews').on('value', (s) => {
+            const list = document.getElementById('reviewsList');
+            list.innerHTML = '';
+            const data = s.val();
+            for(let id in data) {
+                list.innerHTML += `<div class="review-card"><p>${data[id].text}</p><small>${data[id].date}</small></div>`;
+            }
+        });
     }
 </script>
 </body>
