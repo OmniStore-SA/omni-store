@@ -3,63 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر أومني - Omni Store</title>
+    <title>متجر أومني - الإصدار الكامل المستقر</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --gold: #c7a13c; --black: #000; --dark: #121212; --gray: #252525; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--black); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--black); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; overflow-x: hidden; }
 
-        /* شاشة الدخول */
+        /* 1. شاشة تسجيل الدخول */
         #authOverlay { position: fixed; inset: 0; background: var(--black); z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: var(--dark); padding: 40px 30px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; text-align: center; }
         .login-box img { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 20px; }
         .login-box input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 12px; text-align: center; outline: none; box-sizing: border-box; }
         .login-box button { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; color: #000; }
 
-        /* السلة العائمة (تظهر فوق كل شيء) */
+        /* 2. السلة العائمة (ثابتة في كل القوائم) */
         #floatingCart { position: fixed; bottom: 30px; left: 25px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 88888; cursor: pointer; box-shadow: 0 5px 20px rgba(199, 161, 60, 0.4); transition: 0.3s; }
         .cart-count { position: absolute; top: -5px; right: -5px; background: #ff0000; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid #000; }
 
-        /* زر الترس */
+        /* 3. زر الترس والقائمة الجانبية (Sidebar) */
         #settingsBtn { position: fixed; top: 25px; right: 25px; width: 50px; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 77777; cursor: pointer; font-size: 24px; }
         
-        /* القائمة الجانبية المحدثة */
         #sideMenu { position: fixed; top: 0; right: -350px; width: 300px; height: 100%; background: var(--dark); z-index: 95000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-sizing: border-box; border-left: 3px solid var(--gold); box-shadow: -10px 0 30px rgba(0,0,0,0.8); }
         #sideMenu.active { right: 0; }
         
-        /* زر إغلاق الترس (X) */
-        .close-menu-btn { position: absolute; top: 20px; left: 20px; background: var(--gray); border: 1px solid var(--gold); color: var(--gold); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 18px; }
+        /* زر إغلاق الترس مخصص للجوال */
+        .close-menu-btn { position: absolute; top: 20px; left: 20px; background: var(--gray); border: 1px solid var(--gold); color: var(--gold); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 18px; z-index: 95001; }
 
-        .menu-logo { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); display: block; margin: 40px auto 10px; }
+        .menu-logo { width: 85px; height: 85px; border-radius: 50%; border: 2px solid var(--gold); display: block; margin: 45px auto 10px; }
         .user-name { text-align: center; color: var(--gold); font-weight: bold; margin-bottom: 25px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .menu-item { padding: 15px; border-radius: 12px; margin-bottom: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; transition: 0.2s; }
         .menu-item:active { background: #1a1a1a; transform: scale(0.95); }
-        .logout-btn { color: #ff4d4d !important; margin-top: 30px; }
+        .logout-btn { color: #ff4d4d !important; margin-top: 30px; border: 1px solid #ff4d4d44; }
 
         /* خلفية التعتيم عند فتح القائمة */
         #menuOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 94000; display: none; }
 
-        /* الرئيسية */
+        /* 4. الرئيسية (Hero Section) */
         .hero { width: 100vw; height: 100vh; position: relative; cursor: pointer; overflow: hidden; }
         .hero img { width: 100%; height: 100%; object-fit: cover; }
-        .clickable-area { position: absolute; inset: 0; z-index: 10; }
         .grid-btn { position: absolute; z-index: 20; background: transparent; border: none; cursor: pointer; }
 
-        /* الصفحات */
-        .page { display: none; position: fixed; inset: 0; background: var(--black); z-index: 80000; overflow-y: auto; padding-bottom: 100px; }
+        /* 5. الصفحات الداخلية */
+        .page { display: none; position: fixed; inset: 0; background: var(--black); z-index: 80000; overflow-y: auto; padding-bottom: 160px; }
         .header { position: sticky; top: 0; background: var(--dark); padding: 20px; border-bottom: 2px solid var(--gold); display: flex; align-items: center; z-index: 80001; }
         .back-btn { background: var(--gold); color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; margin-left: 20px; cursor: pointer; }
         
         .card { background: var(--dark); padding: 20px; border-radius: 20px; border: 1px solid #222; margin: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .add-btn { background: var(--gold); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .add-btn { background: var(--gold); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .add-btn:active { transform: scale(0.9); }
+
+        /* 6. قسم بيانات الحساب (الملاحظة والبريد) */
+        .order-info-box { background: #1a1a1a; padding: 20px; border-radius: 25px; margin: 15px; border: 1px dashed var(--gold); }
+        .order-info-box label { color: var(--gold); font-weight: bold; display: block; text-align: center; margin-bottom: 10px; font-size: 16px; }
+        .order-info-box input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; text-align: center; outline: none; box-sizing: border-box; font-size: 16px; }
+        .warning-text { color: #ffcc00; font-size: 13px; margin-top: 15px; line-height: 1.6; text-align: center; display: block; font-weight: bold; border-top: 1px solid #333; padding-top: 12px; }
 
         /* التقييمات */
-        .review-box { padding: 20px; }
-        .review-input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--gold); color: white; border-radius: 15px; margin-bottom: 15px; height: 100px; outline: none; }
+        .rev-input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--gold); color: white; border-radius: 15px; margin-bottom: 15px; height: 100px; outline: none; }
 
+        /* عرض الأجهزة */
         .pc-v { display: block; } .mob-v { display: none; }
         @media (max-width: 768px) { .pc-v { display: none; } .mob-v { display: block; } }
     </style>
@@ -71,7 +76,7 @@
 <div id="authOverlay">
     <div class="login-box">
         <img src="لوقو متجر اومني .jpeg">
-        <h2 style="color:var(--gold); margin:0;">تسجيل دخول</h2>
+        <h2 style="color:var(--gold); margin:0 0 10px 0;">مرحباً بك</h2>
         <input type="text" id="regName" placeholder="الاسم الكريم">
         <input type="tel" id="regPhone" placeholder="رقم الجوال">
         <button onclick="saveSession()">دخول المتجر</button>
@@ -100,17 +105,15 @@
 </div>
 
 <div class="hero mob-v">
-    <div class="clickable-area" onclick="loadProducts('all', 'جميع الخدمات')"></div>
-    <img src="صوره القائمه الرئيسيه للجوال.jpeg">
-    <button class="grid-btn" style="top:34%; left:5%; width:45%; height:18%;" onclick="loadProducts('entertainment', '🎬 قسم الترفيه')"></button>
-    <button class="grid-btn" style="top:53%; left:5%; width:45%; height:18%;" onclick="loadProducts('ai', '🤖 الذكاء الاصطناعي')"></button>
-    <button class="grid-btn" style="top:72%; left:5%; width:44%; height:18%;" onclick="loadProducts('social', '🚀 السوشال ميديا')"></button>
-    <button class="grid-btn" style="top:72%; left:51%; width:44%; height:18%;" onclick="loadProducts('cards', '💳 البطاقات')"></button>
+    <img src="صوره القائمه الرئيسيه للجوال.jpeg" onclick="loadProducts('all', '📦 جميع الخدمات')">
+    <button class="grid-btn" style="top:34%; left:5%; width:45%; height:18%;" onclick="loadProducts('entertainment', '🎬 الترفيه')"></button>
+    <button class="grid-btn" style="top:53%; left:5%; width:45%; height:18%;" onclick="loadProducts('ai', '🤖 ذكاء اصطناعي')"></button>
+    <button class="grid-btn" style="top:72%; left:5%; width:44%; height:18%;" onclick="loadProducts('social', '🚀 سوشال ميديا')"></button>
+    <button class="grid-btn" style="top:72%; left:51%; width:44%; height:18%;" onclick="loadProducts('cards', '💳 بطاقات')"></button>
 </div>
 
 <div class="hero pc-v">
-    <div class="clickable-area" onclick="loadProducts('all', 'جميع الخدمات')"></div>
-    <img src="اومني القائمه الاوله.jpeg">
+    <img src="اومني القائمه الاوله.jpeg" onclick="loadProducts('all', '📦 جميع الخدمات')">
     <button class="grid-btn" style="top:75%; left:5%; width:20%; height:15%;" onclick="loadProducts('entertainment', '🎬 ترفيه')"></button>
     <button class="grid-btn" style="top:75%; left:28%; width:20%; height:15%;" onclick="loadProducts('ai', '🤖 ذكاء')"></button>
     <button class="grid-btn" style="top:75%; left:52%; width:20%; height:15%;" onclick="loadProducts('social', '🚀 سوشال')"></button>
@@ -123,19 +126,29 @@
 </div>
 
 <div class="page" id="cartPage">
-    <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 style="color:var(--gold); margin:0;">سلة طلباتك</h3></div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 style="color:var(--gold); margin:0;">سلة المشتريات</h3></div>
     <div id="cartGrid"></div>
+    
+    <div class="order-info-box">
+        <label>📧 بيانات الحساب</label>
+        <input type="email" id="userEmail" placeholder="أدخل بريدك الإلكتروني هنا">
+        <span class="warning-text">
+            ⚠️ ملاحظة: لا تضع البريد إلا إذا كان المنتج يتطلب ذلك.<br>
+            ⚠️ تنبيه: في حال وجود غلط بالبريد لن يتم التعويض.
+        </span>
+    </div>
+
     <div style="position:fixed; bottom:0; width:100%; background:var(--dark); padding:20px; border-top:2px solid var(--gold); box-sizing:border-box;">
-        <button onclick="sendOrder()" style="width:100%; padding:18px; background:var(--gold); border:none; border-radius:12px; font-weight:bold; font-size:18px; color:#000;">إرسال الطلب واتساب 🚀</button>
+        <button onclick="sendOrder()" style="width:100%; padding:18px; background:var(--gold); border:none; border-radius:12px; font-weight:bold; font-size:18px; color:#000;">تأكيد الطلب واتساب ✅</button>
     </div>
 </div>
 
 <div class="page" id="reviewsPage">
-    <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 style="color:var(--gold); margin:0;">التقييمات</h3></div>
-    <div class="review-box">
-        <textarea id="revText" class="review-input" placeholder="اكتب تجربتك مع متجر أومني..."></textarea>
-        <button onclick="postReview()" style="width:100%; padding:15px; background:var(--gold); color:#000; border:none; border-radius:12px; font-weight:bold;">نشر التقييم ⭐</button>
-        <div id="revList" style="margin-top:30px;"></div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 style="color:var(--gold); margin:0;">آراء العملاء</h3></div>
+    <div style="padding:20px;">
+        <textarea id="revText" class="rev-input" placeholder="اكتب تقييمك لخدماتنا..."></textarea>
+        <button onclick="postReview()" style="width:100%; padding:15px; background:var(--gold); border:none; border-radius:12px; font-weight:bold; color:#000;">نشر التقييم ⭐</button>
+        <div id="revList" style="margin-top:25px;"></div>
     </div>
 </div>
 
@@ -155,37 +168,25 @@
     let allProducts = [];
 
     window.onload = () => {
-        const user = localStorage.getItem('omni_user');
-        if(user) {
-            document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('displayUser').innerText = "مرحباً، " + user;
-        }
+        const u = localStorage.getItem('omni_user');
+        if(u) { document.getElementById('authOverlay').style.display = 'none'; document.getElementById('displayUser').innerText = "مرحباً، " + u; }
+        
         db.ref('products').on('value', s => { allProducts = Object.values(s.val() || {}); });
         db.ref('reviews').on('value', s => {
-            const list = document.getElementById('revList');
-            list.innerHTML = '';
-            Object.values(s.val() || {}).reverse().forEach(r => {
-                list.innerHTML += `<div class="card"><span><b>${r.name}:</b> ${r.msg}</span></div>`;
-            });
+            const list = document.getElementById('revList'); list.innerHTML = '';
+            Object.values(s.val() || {}).reverse().forEach(r => { list.innerHTML += `<div class="card"><span><b>${r.name}:</b> ${r.msg}</span></div>`; });
         });
     };
 
     function saveSession() {
-        const n = document.getElementById('regName').value;
-        const p = document.getElementById('regPhone').value;
-        if(n && p) {
-            db.ref('users/'+p).set({name: n, phone: p});
-            localStorage.setItem('omni_user', n);
-            location.reload();
-        }
+        const n = document.getElementById('regName').value, p = document.getElementById('regPhone').value;
+        if(n && p) { db.ref('users/'+p).set({name: n, phone: p}); localStorage.setItem('omni_user', n); location.reload(); }
     }
 
-    // دالة فتح/إغلاق الترس
     function toggleMenu() {
-        const menu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('menuOverlay');
-        menu.classList.toggle('active');
-        overlay.style.display = menu.classList.contains('active') ? 'block' : 'none';
+        const m = document.getElementById('sideMenu'), o = document.getElementById('menuOverlay');
+        m.classList.toggle('active');
+        o.style.display = m.classList.contains('active') ? 'block' : 'none';
     }
 
     function openPage(id) {
@@ -199,12 +200,12 @@
     function closeAll() {
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
         document.getElementById('floatingCart').style.display = 'flex';
+        document.getElementById('settingsBtn').style.display = 'flex';
     }
 
     function loadProducts(cat, title) {
         document.getElementById('pageTitle').innerText = title;
-        const grid = document.getElementById('productsGrid');
-        grid.innerHTML = '';
+        const grid = document.getElementById('productsGrid'); grid.innerHTML = '';
         const items = (cat === 'all') ? allProducts : allProducts.filter(p => p.category === cat);
         items.forEach(p => {
             grid.innerHTML += `<div class="card"><div><b>${p.name}</b><br><span style="color:var(--gold)">${p.price} ريال</span></div>
@@ -218,41 +219,28 @@
         document.getElementById('cartBadge').innerText = myCart.length;
         updateCartList();
         const btn = document.getElementById('floatingCart');
-        btn.style.transform = 'scale(1.2)';
-        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+        btn.style.transform = 'scale(1.2)'; setTimeout(() => btn.style.transform = 'scale(1)', 200);
     }
 
     function updateCartList() {
-        const grid = document.getElementById('cartGrid');
-        grid.innerHTML = '';
-        let total = 0;
-        myCart.forEach((item, i) => {
-            total += item.p;
-            grid.innerHTML += `<div class="card"><span>${item.n}</span><button onclick="removeItem(${i})" style="background:red; color:white; border:none; padding:8px 15px; border-radius:8px;">حذف</button></div>`;
-        });
-        grid.innerHTML += `<h2 style="text-align:center; color:var(--gold); margin:30px 0;">الإجمالي: ${total} ريال</h2>`;
-    }
-
-    function removeItem(i) {
-        myCart.splice(i, 1);
-        document.getElementById('cartBadge').innerText = myCart.length;
-        updateCartList();
-    }
-
-    function postReview() {
-        const msg = document.getElementById('revText').value;
-        if(msg) {
-            db.ref('reviews').push({name: localStorage.getItem('omni_user'), msg: msg});
-            document.getElementById('revText').value = '';
-            alert("تم النشر بنجاح!");
-        }
+        const grid = document.getElementById('cartGrid'); grid.innerHTML = ''; let total = 0;
+        myCart.forEach((item, i) => { total += item.p; grid.innerHTML += `<div class="card"><span>${item.n}</span><button onclick="myCart.splice(${i},1);updateCartList();document.getElementById('cartBadge').innerText=myCart.length;" style="background:red; color:white; border:none; padding:8px 15px; border-radius:8px;">حذف</button></div>`; });
+        grid.innerHTML += `<h3 style="text-align:center; color:var(--gold); margin:20px 0;">الإجمالي: ${total} ريال</h3>`;
     }
 
     function sendOrder() {
         if(myCart.length === 0) return alert("سلتك فارغة!");
+        const email = document.getElementById('userEmail').value;
         let text = `طلب جديد من المتجر (${localStorage.getItem('omni_user')}):\n`;
         myCart.forEach(i => text += `- ${i.n} (${i.p} ريال)\n`);
+        text += (email) ? `\n📧 البريد الإلكتروني المرفق: ${email}` : `\n📧 لم يتم تزويد بريد إلكتروني.`;
+        text += `\n\n⚠️ (موافق على سياسة عدم التعويض في حال الخطأ)`;
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(text)}`);
+    }
+
+    function postReview() {
+        const msg = document.getElementById('revText').value;
+        if(msg) { db.ref('reviews').push({name: localStorage.getItem('omni_user'), msg: msg}); document.getElementById('revText').value = ''; alert("تم النشر!"); }
     }
 
     function logout() { localStorage.clear(); location.reload(); }
