@@ -22,29 +22,29 @@
         #floatingCart { position: fixed; bottom: 30px; left: 25px; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 88888; cursor: pointer; box-shadow: 0 5px 20px rgba(199, 161, 60, 0.4); transition: 0.3s; }
         .cart-count { position: absolute; top: -5px; right: -5px; background: #ff0000; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid #000; }
 
-        /* زر الترس الثابت */
-        #settingsBtn { position: fixed; top: 25px; right: 25px; width: 50px; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 77777; cursor: pointer; font-size: 24px; }
+        /* إصلاح الترس (ثابت فوق كل شيء) */
+        #settingsBtn { position: fixed; top: 25px; right: 25px; width: 50px; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99998; cursor: pointer; font-size: 24px; transition: 0.3s; }
+        #settingsBtn:active { transform: rotate(90deg); }
         
         /* القائمة الجانبية */
-        #sideMenu { position: fixed; top: 0; right: -350px; width: 300px; height: 100%; background: var(--dark); z-index: 95000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-sizing: border-box; border-left: 3px solid var(--gold); }
+        #sideMenu { position: fixed; top: 0; right: -350px; width: 300px; height: 100%; background: var(--dark); z-index: 99999; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-sizing: border-box; border-left: 3px solid var(--gold); }
         #sideMenu.active { right: 0; }
         .close-menu-btn { position: absolute; top: 20px; left: 20px; background: var(--gray); border: 1px solid var(--gold); color: var(--gold); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
         .menu-logo { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); display: block; margin: 40px auto 10px; }
         .user-name { text-align: center; color: var(--gold); font-weight: bold; margin-bottom: 25px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .menu-item { padding: 15px; border-radius: 12px; margin-bottom: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; }
-        #menuOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 94000; display: none; }
+        #menuOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99997; display: none; }
 
-        /* عرض المنتجات المطور بالصور */
+        /* عرض المنتجات - تعديل مقياس الصورة لتكون مربعة */
         .card { background: var(--dark); border-radius: 20px; border: 1px solid #222; margin: 15px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; }
-        .card-img { width: 100%; height: 160px; object-fit: cover; background: #000; }
+        .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #000; border-bottom: 1px solid #222; }
         .card-body { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .add-btn { background: var(--gold); color: #000; border: none; padding: 12px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .out-of-stock { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
 
-        /* نافذة تفاصيل المنتج (Modal) */
-        #detailsModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 90000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--dark); border: 2px solid var(--gold); border-radius: 25px; width: 100%; max-width: 450px; overflow: hidden; }
-        .modal-img { width: 100%; height: 220px; object-fit: cover; }
+        /* نافذة تفاصيل المنتج المربعة */
+        #detailsModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--dark); border: 2px solid var(--gold); border-radius: 25px; width: 100%; max-width: 400px; overflow: hidden; }
+        .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-bottom: 1px solid var(--gold); }
         .modal-info { padding: 20px; }
 
         /* الرئيسية */
@@ -199,7 +199,7 @@
     function openPage(id) {
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
         document.getElementById(id).style.display = 'block';
-        toggleMenu();
+        if(document.getElementById('sideMenu').classList.contains('active')) toggleMenu();
         document.getElementById('floatingCart').style.display = (id === 'cartPage') ? 'none' : 'flex';
     }
 
@@ -215,10 +215,9 @@
         Object.keys(allProducts).forEach(key => {
             const p = allProducts[key];
             if(cat === 'all' || p.category === cat) {
-                const isOut = p.inStock === false;
                 grid.innerHTML += `
-                    <div class="card ${isOut?'out-of-stock':''}" onclick="showDetails('${key}')">
-                        <img src="${p.img || 'https://via.placeholder.com/400x160?text=Omni+Store'}" class="card-img">
+                    <div class="card" onclick="showDetails('${key}')">
+                        <img src="${p.img || 'https://via.placeholder.com/400x400?text=Omni+Store'}" class="card-img">
                         <div class="card-body">
                             <div><b>${p.name}</b><br><span style="color:var(--gold)">${p.price} ريال</span></div>
                             <button class="add-btn" onclick="event.stopPropagation(); addToCart('${p.name}', ${p.price})">➕</button>
@@ -271,8 +270,6 @@
     function sendOrder() {
         if(myCart.length === 0) return;
         const u = localStorage.getItem('omni_user'), p = localStorage.getItem('omni_phone'), e = document.getElementById('userEmail').value;
-        const orderData = { user: u, phone: p, email: e, items: myCart, time: new Date().toLocaleString() };
-        db.ref('orders').push(orderData);
         let text = `طلب جديد:\n👤 ${u}\n📱 ${p}\n`;
         myCart.forEach(i => text += `- ${i.n} (${i.p} ريال)\n`);
         window.open(`https://wa.me/966548512295?text=${encodeURIComponent(text)}`);
