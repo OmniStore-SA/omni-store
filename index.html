@@ -2,101 +2,190 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Omni Store | متجر أومني</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أومني - العقل الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --main: #ff4500; --bg: #050505; --card-red: #8b2626; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; overflow-x: hidden; }
+        /* --- CSS Section --- */
+        body {
+            margin: 0;
+            background-color: #000000; /* أسود فخم يتناسب مع صورك */
+            color: #ffffff;
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            overflow-x: hidden;
+        }
 
-        /* نافذة الدخول 320x350 */
-        #authOverlay { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: #121212; width: 320px; height: 350px; border-radius: 20px; border: 1px solid var(--main); text-align: center; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
-        .login-box img { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--main); margin-bottom: 15px; align-self: center; object-fit: cover; }
-        .login-box input { width: 100%; padding: 12px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; text-align: center; outline: none; box-sizing: border-box; }
-        .login-box button { width: 100%; padding: 12px; background: var(--main); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: #fff; margin-top: 10px; }
+        /* شاشة البداية (Splash Screen) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 9999;
+            background: #000;
+        }
 
-        /* كروت المنتجات نمط ديزني بلس */
-        .card { background: var(--card-red); border-radius: 15px; margin: 10px; overflow: hidden; display: flex; flex-direction: column; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #000; }
-        .card-info { padding: 15px; display: flex; flex-direction: column; gap: 5px; }
-        .card-title { font-weight: bold; font-size: 16px; margin: 0; }
-        .card-price { font-size: 18px; color: #fff; font-weight: bold; margin: 5px 0; }
-        .old-price { text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 13px; margin-left: 5px; }
-        .add-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .splash-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-        /* الواجهة الرئيسية */
-        .hero { width: 100%; height: 100vh; position: relative; }
-        .hero img { width: 100%; height: 100%; object-fit: cover; }
-        .grid-btn { position: absolute; background: transparent; border: none; cursor: pointer; }
+        /* زر تخطي شفاف يوضع فوق كلمة "تخطي" في صورتك */
+        #skip-overlay {
+            position: absolute;
+            top: 2%; /* يغطي منطقة التخطي العلوية */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 10%;
+            background: rgba(255, 255, 255, 0); 
+            cursor: pointer;
+            z-index: 10000;
+        }
 
-        /* الصفحات الداخلية */
-        .page { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 80000; overflow-y: auto; padding-bottom: 50px; }
-        .header { position: sticky; top: 0; background: #111; padding: 15px; border-bottom: 1px solid var(--main); display: flex; align-items: center; z-index: 80001; }
-        .back-btn { background: var(--main); color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 15px; }
+        /* واجهة المتجر */
+        .hidden { display: none; }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(to bottom, #111, #000);
+        }
+
+        .store-logo {
+            width: 80px;
+            border-radius: 50%;
+            border: 2px solid #d4af37; /* إطار ذهبي */
+        }
+
+        .hero-banner {
+            width: 100%;
+            display: block;
+        }
+
+        .container { padding: 15px; }
+
+        /* بنرات الأقسام (المقاس الذهبي 2:1) */
+        .category-item { margin-bottom: 40px; }
+
+        .banner-wrapper img {
+            width: 100%;
+            aspect-ratio: 2 / 1; 
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .category-title {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-top: 15px;
+            color: #d4af37; /* لون ذهبي */
+        }
+
+        /* نظام السحب العرضي (Horizontal Scroll) */
+        .product-slider {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 15px 0;
+            scrollbar-width: none; /* إخفاء شريط التمرير */
+        }
+
+        .product-slider::-webkit-scrollbar { display: none; }
+
+        .product-card {
+            min-width: 160px;
+            height: 200px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+        }
     </style>
 </head>
 <body>
 
-<div id="authOverlay">
-    <div class="login-box">
-        <img src="لوقو متجر اومني .jpeg">
-        <h3 style="margin:0 0 10px 0; color:var(--main);">تسجيل دخول</h3>
-        <input type="text" id="uName" placeholder="الاسم الكريم">
-        <input type="tel" id="uPhone" placeholder="رقم الجوال">
-        <button onclick="login()">دخول المتجر</button>
+    <div id="splash-screen">
+        <div id="skip-overlay" onclick="startStore()"></div>
+        <img src="صورة دخول المتجر.jpeg" alt="Splash" class="splash-img">
     </div>
-</div>
 
-<div id="heroSection" class="hero">
-    <img src="صوره القائمه الرئيسيه للجوال.jpeg">
-    <button class="grid-btn" style="top:34%; left:5%; width:45%; height:18%;" onclick="loadProducts('entertainment', '🎬 الترفيه')"></button>
-    <button class="grid-btn" style="top:53%; left:5%; width:45%; height:18%;" onclick="loadProducts('ai', '🤖 الذكاء الاصطناعي')"></button>
-    <button class="grid-btn" style="top:72%; left:5%; width:44%; height:18%;" onclick="loadProducts('social', '🚀 السوشال ميديا')"></button>
-    <button class="grid-btn" style="top:72%; left:51%; width:44%; height:18%;" onclick="loadProducts('insta', '📸 يوزرات انستا')"></button>
-</div>
+    <div id="main-content" class="hidden">
+        <header>
+            <img src="لوقو المتجر.jpeg" alt="Omni Logo" class="store-logo">
+        </header>
 
-<div class="page" id="productsPage">
-    <div class="header"><button class="back-btn" onclick="closeAll()">🔙 عودة</button><h3 id="pageTitle" style="margin:0; font-size:16px;"></h3></div>
-    <div id="productsGrid" style="display: grid; grid-template-columns: 1fr 1fr; padding: 5px;"></div>
-</div>
+        <section>
+            <img src="صورة الرئيسيه.jpeg" alt="الرئيسية" class="hero-banner">
+        </section>
 
-<script>
-    const firebaseConfig = { apiKey: "AIzaSyCWkjGbA5gZBqr60Qa98WXsyrDZQJlv07I", authDomain: "omnistore-a5251.firebaseapp.com", databaseURL: "https://omnistore-a5251-default-rtdb.firebaseio.com", projectId: "omnistore-a5251", appId: "1:542087784992:web:5ed1e7ec4d4a423bc3aa45" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let allProducts = {};
+        <div class="container">
+            
+            <div class="category-item">
+                <div class="banner-wrapper">
+                    <img src="قسم انستا .jpeg" alt="Instagram">
+                </div>
+                <h2 class="category-title">قسم انستقرام</h2>
+                <div class="product-slider">
+                    <div class="product-card">قريباً..</div>
+                    <div class="product-card">قريباً..</div>
+                    <div class="product-card">قريباً..</div>
+                </div>
+            </div>
 
-    window.onload = () => { if(localStorage.getItem('omni_user')) document.getElementById('authOverlay').style.display = 'none'; db.ref('products').on('value', s => allProducts = s.val() || {}); };
+            <div class="category-item">
+                <div class="banner-wrapper">
+                    <img src="قسم تيك توك .jpeg" alt="TikTok">
+                </div>
+                <h2 class="category-title">قسم تيك توك</h2>
+                <div class="product-slider">
+                    <div class="product-card">قريباً..</div>
+                    <div class="product-card">قريباً..</div>
+                </div>
+            </div>
 
-    function login() {
-        const n = document.getElementById('uName').value, p = document.getElementById('uPhone').value;
-        if(n && p) { localStorage.setItem('omni_user', n); localStorage.setItem('omni_phone', p); location.reload(); }
-    }
+            <div class="category-item">
+                <div class="banner-wrapper">
+                    <img src="قسم الذكاء الاصطناعي .jpeg" alt="AI">
+                </div>
+                <h2 class="category-title">قسم الذكاء الاصطناعي</h2>
+            </div>
 
-    function loadProducts(cat, title) {
-        document.getElementById('heroSection').style.display = 'none';
-        document.getElementById('productsPage').style.display = 'block';
-        document.getElementById('pageTitle').innerText = title;
-        const grid = document.getElementById('productsGrid'); grid.innerHTML = '';
-        for(let id in allProducts) {
-            const p = allProducts[id];
-            if(p.category === cat) {
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${p.img}" class="card-img">
-                        <div class="card-info">
-                            <p class="card-title">${p.name}</p>
-                            <p class="card-price">${p.price} ريال ${p.oldPrice ? `<span class="old-price">${p.oldPrice}</span>` : ''}</p>
-                            <button class="add-btn" onclick="window.open('https://wa.me/966548512295?text=طلب: ${p.name}')">🛒 Add to cart</button>
-                        </div>
-                    </div>`;
-            }
+        </div>
+    </div>
+
+    <script>
+        /* --- JavaScript Section --- */
+        function startStore() {
+            const splash = document.getElementById('splash-screen');
+            const main = document.getElementById('main-content');
+
+            // تأثير التلاشي (Fade Out) لمدة 0.8 ثانية
+            splash.style.transition = "opacity 0.8s ease";
+            splash.style.opacity = "0";
+
+            setTimeout(() => {
+                splash.style.display = "none";
+                main.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }, 800);
         }
-    }
 
-    function closeAll() { document.getElementById('productsPage').style.display = 'none'; document.getElementById('heroSection').style.display = 'block'; }
-</script>
+        // تلاشي تلقائي بعد 5 ثوانٍ
+        setTimeout(() => {
+            if (document.getElementById('splash-screen').style.display !== "none") {
+                startStore();
+            }
+        }, 5000);
+    </script>
 </body>
 </html>
