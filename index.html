@@ -3,109 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>متجر أومني | OMNI STORE</title>
+    <title>متجر أومني | العقل الرقمي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- 1. الإعدادات الأساسية لضمان ملء الشاشة (النقاط الحمراء) --- */
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; color: white; font-family: 'Cairo', sans-serif;
-            overflow-x: hidden;
+        /* 1. تصفير الإعدادات لضمان ملء الشاشة بالكامل (حل مشكلة النقاط الحمراء) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            width: 100%; height: 100%; 
+            background: #000; color: white; 
+            font-family: 'Cairo', sans-serif; 
+            overflow-x: hidden; 
         }
 
-        /* --- 2. شاشة الإعلان Full Screen (من فوق لتحت بدون فراغ) --- */
+        /* 2. شاشة الإعلان Full Screen (من فوق لتحت 100%) */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: 10000; background: #000; display: block;
-            transition: opacity 0.8s ease;
+            z-index: 10000; background: #000; transition: opacity 0.8s ease;
         }
         .splash-img {
-            width: 100%; height: 100%; object-fit: cover; /* لضمان ملء الشاشة بالكامل */
+            width: 100%; height: 100%; 
+            object-fit: cover; /* يضمن تغطية الشاشة بالكامل مهما كان نوع الجوال */
             display: block;
         }
 
-        /* منطقة التخطي (النقطة الخضراء) */
+        /* منطقة التخطي (منطقتك الخضراء) */
         #skip-hitbox {
             position: absolute;
-            top: 2%; /* تعديل المكان ليكون فوق الكلمة اللي حددتها بالأخضر */
+            top: 2%; /* وضعناه في الأعلى ليطابق منطقتك الخضراء */
             left: 50%; transform: translateX(-50%);
-            width: 80%; height: 10%; /* مساحة ضغط كبيرة ومريحة */
+            width: 70%; height: 10%; 
             background: rgba(255, 255, 255, 0); /* شفافة تماماً */
             cursor: pointer; z-index: 10001;
         }
 
-        /* --- 3. الشريط العلوي الفخم (The Pro Header) --- */
+        /* 3. الشريط العلوي الفخم (The Pro Bar) */
         header {
-            position: fixed; top: 12px; left: 5%; width: 90%; height: 58px;
-            background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px;
+            position: fixed; top: 15px; left: 5%; width: 90%; height: 60px;
+            background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 18px; box-sizing: border-box; z-index: 999;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+            padding: 0 20px; z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .header-title {
-            color: #d4af37; font-weight: 900; font-size: 1.1rem;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            color: #d4af37; font-weight: 900; font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
             display: flex; align-items: center; gap: 10px;
         }
 
+        /* العلم السعودي الصغير والمتحرك */
         .saudi-flag {
-            width: 24px; animation: wave 2.5s infinite ease-in-out;
+            width: 25px; animation: flag-wave 2s infinite ease-in-out;
         }
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            50% { transform: rotate(8deg) translateY(-3px); }
+        @keyframes flag-wave {
+            0%, 100% { transform: rotate(0) translateY(0); }
+            50% { transform: rotate(10deg) translateY(-3px); }
         }
 
-        .menu-dots { font-size: 28px; color: #d4af37; cursor: pointer; }
-        .back-btn { font-size: 26px; color: #fff; cursor: pointer; display: none; }
+        .menu-dots { font-size: 30px; color: #d4af37; cursor: pointer; }
+        .back-arrow { font-size: 28px; color: #fff; cursor: pointer; display: none; }
 
-        /* --- 4. القائمة الجانبية (الوقو الدائري وجميع الأقسام) --- */
+        /* 4. القائمة الجانبية (Sidebar) */
         #side-menu {
             position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
-            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(12px);
-            z-index: 1001; transition: 0.5s ease-in-out;
-            padding: 40px 20px; box-sizing: border-box;
-            border-left: 2px solid #d4af37;
+            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(15px);
+            z-index: 1001; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 50px 25px; border-left: 2px solid #d4af37;
         }
         #side-menu.active { right: 0; }
 
         .menu-header { text-align: center; margin-bottom: 40px; }
         .menu-logo {
-            width: 110px; height: 110px; border-radius: 50%; /* لوقو دائري */
-            border: 2px solid #d4af37; padding: 5px; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-            margin-bottom: 15px; object-fit: cover;
+            width: 120px; height: 120px; border-radius: 50%; /* الوقو دائري */
+            border: 2px solid #d4af37; padding: 5px; margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); object-fit: cover;
         }
 
-        .menu-list { list-style: none; padding: 0; }
+        .menu-list { list-style: none; }
         .menu-list li {
-            padding: 18px; border-bottom: 1px solid #151515;
-            display: flex; align-items: center; gap: 12px; font-size: 1.1rem;
+            padding: 18px; border-bottom: 1px solid #1a1a1a;
+            font-size: 1.1rem; color: #fff;
         }
-        .menu-list a { color: #fff; text-decoration: none; width: 100%; }
+        .menu-list a { color: inherit; text-decoration: none; display: block; width: 100%; }
 
-        /* --- 5. محتوى المتجر --- */
-        #store-ui { display: none; padding-top: 90px; }
-        .hero-img {
-            width: 92%; margin: 0 auto 25px; display: block;
-            border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+        /* 5. واجهة المتجر (المحتوى) */
+        #store-ui { display: none; padding-top: 100px; }
+        .hero-banner {
+            width: 92%; margin: 0 auto 30px; display: block;
+            border-radius: 25px; box-shadow: 0 15px 45px rgba(0,0,0,0.9);
         }
 
-        .container { padding: 0 15px 40px; }
-        .category-card { margin-bottom: 35px; cursor: pointer; }
-        .category-card img {
-            width: 100%; border-radius: 22px; aspect-ratio: 2 / 1;
+        .container { padding: 0 20px 50px; }
+        .cat-card { margin-bottom: 40px; cursor: pointer; }
+        .cat-card img {
+            width: 100%; border-radius: 25px; aspect-ratio: 2 / 1;
             object-fit: cover; border: 1px solid #222;
         }
-        .cat-title {
+        .cat-name {
             text-align: center; color: #d4af37; font-weight: bold;
-            font-size: 1.25rem; margin-top: 12px;
+            font-size: 1.3rem; margin-top: 15px;
         }
 
+        /* خلفية ضبابية عند فتح المنيو */
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: rgba(0,0,0,0.85); z-index: 1000; display: none;
+            background: rgba(0,0,0,0.8); z-index: 1000; display: none;
         }
     </style>
 </head>
@@ -117,11 +121,11 @@
     </div>
 
     <header>
-        <div class="header-title" id="header-text">
+        <div id="header-branding" class="header-title">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg" class="saudi-flag">
             متجر أومني
         </div>
-        <div id="back-icon" class="back-btn" onclick="goBack()">&#8594;</div>
+        <div id="back-icon" class="back-arrow" onclick="goBackMain()">&#8594;</div>
         <div class="menu-dots" onclick="toggleMenu()">&#8942;</div>
     </header>
 
@@ -129,56 +133,57 @@
     <div id="side-menu">
         <div class="menu-header">
             <img src="لوقو المتجر.jpeg" class="menu-logo">
-            <div style="color: #d4af37; font-weight: 900; letter-spacing: 2px;">OMNI DIGITAL</div>
+            <div style="color: #d4af37; font-weight: 900; letter-spacing: 1px;">OMNI DIGITAL</div>
         </div>
         <ul class="menu-list">
-            <li onclick="goBack(); toggleMenu();"><a href="#">🏠 الصفحة الرئيسية</a></li>
-            <li onclick="openSection('قسم تيك توك'); toggleMenu();"><a href="#">📱 قسم تيك توك</a></li>
-            <li onclick="openSection('قسم انستا'); toggleMenu();"><a href="#">📸 قسم انستا</a></li>
-            <li onclick="openSection('ستيم أونلاين'); toggleMenu();"><a href="#">🎮 ستيم أونلاين</a></li>
-            <li onclick="openSection('ستيم أوفلاين'); toggleMenu();"><a href="#">🕹️ ستيم أوفلاين</a></li>
-            <li onclick="openSection('الذكاء الاصطناعي'); toggleMenu();"><a href="#">🤖 الذكاء الاصطناعي</a></li>
-            <li><a href="https://wa.me/YOUR_NUMBER" style="color: #25d366;">📧 الدعم الفني</a></li>
+            <li onclick="goBackMain(); toggleMenu();">🏠 الصفحة الرئيسية</li>
+            <li onclick="openSection('قسم تيك توك'); toggleMenu();">📱 قسم تيك توك</li>
+            <li onclick="openSection('قسم انستا'); toggleMenu();">📸 قسم انستا</li>
+            <li onclick="openSection('الذكاء الاصطناعي'); toggleMenu();">🤖 الذكاء الاصطناعي</li>
+            <li onclick="openSection('ستيم أونلاين'); toggleMenu();">🎮 ستيم أونلاين</li>
+            <li onclick="openSection('ستيم أوفلاين'); toggleMenu();">🕹️ ستيم أوفلاين</li>
+            <li style="border: none;"><a href="https://wa.me/9665XXXXXXXX" style="color: #25d366;">💬 الدعم الفني</a></li>
         </ul>
     </div>
 
     <div id="store-ui">
         
-        <div id="home-content">
-            <img src="صورة الرئيسيه الجديدة.png" class="hero-img">
+        <div id="home-view">
+            <img src="صورة الرئيسيه الجديدة.png" class="hero-banner">
 
             <div class="container">
-                <div class="category-card" onclick="openSection('تيك توك')">
+                <div class="cat-card" onclick="openSection('تيك توك')">
                     <img src="قسم تيك توك .jpeg">
-                    <div class="cat-title">قسم تيك توك</div>
+                    <div class="cat-name">قسم تيك توك</div>
                 </div>
 
-                <div class="category-card" onclick="openSection('انستقرام')">
+                <div class="cat-card" onclick="openSection('انستقرام')">
                     <img src="قسم انستا .jpeg">
-                    <div class="cat-title">قسم انستقرام</div>
+                    <div class="cat-name">قسم انستقرام</div>
                 </div>
 
-                <div class="category-card" onclick="openSection('الذكاء الاصطناعي')">
+                <div class="cat-card" onclick="openSection('الذكاء الاصطناعي')">
                     <img src="قسم الذكاء الاصطناعي .jpeg">
-                    <div class="cat-title">قسم الذكاء الاصطناعي</div>
+                    <div class="cat-name">قسم الذكاء الاصطناعي</div>
                 </div>
 
-                <div class="category-card" onclick="openSection('ستيم أونلاين')">
+                <div class="cat-card" onclick="openSection('ألعاب ستيم أونلاين')">
                     <img src="قسم ستيم اولاين .jpeg">
-                    <div class="cat-title">ألعاب ستيم أونلاين</div>
+                    <div class="cat-name">ألعاب ستيم أونلاين</div>
                 </div>
 
-                <div class="category-card" onclick="openSection('ستيم أوفلاين')">
+                <div class="cat-card" onclick="openSection('ألعاب ستيم أوفلاين')">
                     <img src="قسم ستيم اوفلاين.jpeg">
-                    <div class="cat-title">ألعاب ستيم أوفلاين</div>
+                    <div class="cat-name">ألعاب ستيم أوفلاين</div>
                 </div>
             </div>
         </div>
 
-        <div id="section-view" style="display: none; padding: 20px;">
-            <h2 id="section-name" style="color: #d4af37; text-align: center; font-size: 1.8rem;"></h2>
-            <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
-            <p style="text-align: center; color: #555;">المنتجات قريباً جداً في متجر أومني...</p>
+        <div id="section-view" style="display: none; padding: 20px; text-align: center;">
+            <h2 id="current-sec-name" style="color: #d4af37; font-size: 2rem; margin-bottom: 20px;"></h2>
+            <div style="background: #0a0a0a; padding: 40px; border-radius: 20px; border: 1px dashed #333;">
+                <p style="color: #666;">جاري تجهيز أقوى العروض في هذا القسم...</p>
+            </div>
         </div>
 
     </div>
@@ -189,9 +194,9 @@
         const sideMenu = document.getElementById('side-menu');
         const overlay = document.getElementById('overlay');
         const backBtn = document.getElementById('back-icon');
-        const headerText = document.getElementById('header-text');
+        const branding = document.getElementById('header-branding');
 
-        // 1. دخول المتجر
+        // دخول المتجر وتلاشي الإعلان
         function enterStore() {
             splash.style.opacity = '0';
             setTimeout(() => {
@@ -200,35 +205,35 @@
             }, 800);
         }
 
-        // 2. القائمة الجانبية
+        // التحكم في القائمة
         function toggleMenu() {
             sideMenu.classList.toggle('active');
             overlay.style.display = sideMenu.classList.contains('active') ? 'block' : 'none';
         }
 
-        // 3. فتح الأقسام
+        // فتح الأقسام
         function openSection(name) {
-            document.getElementById('home-content').style.display = 'none';
+            document.getElementById('home-view').style.display = 'none';
             document.getElementById('section-view').style.display = 'block';
-            document.getElementById('section-name').innerText = name;
+            document.getElementById('current-sec-name').innerText = name;
             
-            // تحديث الهيدر
+            // تحديث الشريط العلوي
             backBtn.style.display = 'block';
-            headerText.style.display = 'none';
+            branding.style.display = 'none';
             window.scrollTo(0,0);
         }
 
-        // 4. الرجوع للرئيسية
-        function goBack() {
-            document.getElementById('home-content').style.display = 'block';
+        // الرجوع للرئيسية
+        function goBackMain() {
+            document.getElementById('home-view').style.display = 'block';
             document.getElementById('section-view').style.display = 'none';
             
             backBtn.style.display = 'none';
-            headerText.style.display = 'flex';
+            branding.style.display = 'flex';
         }
 
-        // تلاشي تلقائي بعد 6 ثوانٍ كأمان
-        setTimeout(() => { if(splash.style.display !== 'none') enterStore(); }, 6000);
+        // أمان: تلاشي الإعلان تلقائياً بعد 7 ثوانٍ
+        setTimeout(() => { if(splash.style.display !== 'none') enterStore(); }, 7000);
     </script>
 </body>
 </html>
