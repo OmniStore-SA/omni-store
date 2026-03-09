@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم أومني المطورة | OMNI ADMIN PRO</title>
+    <title>لوحة تحكم أومني الشاملة | OMNI ADMIN GOLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --bg: #0a0a0a; --card: #151515; --green: #2ecc71; --red: #e74c3c; }
+        :root { --gold: #d4af37; --bg: #0a0a0a; --card: #151515; --green: #2ecc71; --red: #e74c3c; --blue: #3498db; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: white; padding: 15px; }
+        body { background: var(--bg); color: white; padding: 10px; }
         .admin-container { max-width: 1000px; margin: 0 auto; }
         h1 { color: var(--gold); text-align: center; margin: 20px 0; font-weight: 900; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
         
-        .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { background: var(--card); border: 1px solid var(--gold); color: white; padding: 12px; cursor: pointer; border-radius: 12px; flex: 1; min-width: 140px; font-weight: bold; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tab-btn { background: var(--card); border: 1px solid var(--gold); color: white; padding: 12px; cursor: pointer; border-radius: 12px; flex: 1; min-width: 120px; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
         .tab-btn.active { background: var(--gold); color: black; }
 
-        .section { display: none; background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #333; }
+        .section { display: none; background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #333; animation: fadeIn 0.4s; }
         .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 8px; color: var(--gold); font-weight: bold; }
+        label { display: block; margin-bottom: 5px; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #000; color: white; outline: none; }
-        input:focus { border-color: var(--gold); }
-
-        .btn-main { background: var(--gold); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
+        
+        .btn-main { background: var(--gold); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #222; padding: 12px; text-align: center; font-size: 0.9rem; }
+        th, td { border: 1px solid #222; padding: 10px; text-align: center; font-size: 0.8rem; }
         th { background: #1a1a1a; color: var(--gold); }
         
-        .btn-del { background: var(--red); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .btn-edit { background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 5px; }
+        .search-box { background: #111; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 20px; }
+        .result-card { background: #000; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); line-height: 1.8; }
+        .inv-img { max-width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid #444; }
+
+        /* تعديل يدوي سريع */
+        .edit-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:1000; }
+        .edit-modal { background:var(--card); padding:20px; border-radius:15px; width:90%; max-width:500px; border:1px solid var(--gold); }
     </style>
 </head>
 <body>
@@ -40,28 +45,19 @@
     <h1>OMNI ELITE ADMIN PRO</h1>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('add-prod')">📦 إضافة منتج</button>
-        <button class="tab-btn" onclick="showTab('manage-prods')">⚙️ إدارة المنتجات</button>
-        <button class="tab-btn" onclick="showTab('record-sale')">💰 تسجيل بيعة</button>
+        <button class="tab-btn active" onclick="showTab('add-prod')">📦 إضافة</button>
+        <button class="tab-btn" onclick="showTab('manage-prods')">⚙️ إدارة</button>
+        <button class="tab-btn" onclick="showTab('record-sale')">💰 بيعة</button>
+        <button class="tab-btn" onclick="showTab('search-order')">🔍 بحث بالرمز</button>
         <button class="tab-btn" onclick="showTab('settings')">🔑 الربط</button>
     </div>
 
     <div id="add-prod" class="section active">
         <div class="form-group"><label>اسم المنتج:</label><input type="text" id="p-name"></div>
-        <div class="form-group">
-            <label>القسم:</label>
-            <select id="p-category">
-                <option value="ذكاء اصطناعي">الذكاء الاصطناعي 🤖</option>
-                <option value="ستيم أوفلاين">ستيم أوفلاين 🎮</option>
-                <option value="ترفيه">اشتراكات ترفيهية 📺</option>
-            </select>
-        </div>
-        <div class="form-group"><label>السعر الأساسي:</label><input type="number" id="p-price"></div>
-        <div class="form-group"><label>خيارات المنتج (اختياري):</label><textarea id="p-vars" placeholder="شهر=20, شهرين=40"></textarea></div>
-        <div class="form-group"><label>صورة المنتج الرئيسية (رابط أو اسم):</label><input type="text" id="p-img"></div>
-        <div class="form-group"><label>صورة إضافية للوصف (اختياري):</label><input type="text" id="p-extra-img"></div>
-        <div class="form-group"><label>وصف المنتج:</label><textarea id="p-desc"></textarea></div>
-        <button class="btn-main" onclick="saveProduct()">نشر في المتجر العام 🚀</button>
+        <div class="form-group"><label>السعر:</label><input type="number" id="p-price"></div>
+        <div class="form-group"><label>خيارات (اختياري):</label><input type="text" id="p-vars" placeholder="شهر=20, شهرين=40"></div>
+        <div class="form-group"><label>رابط الصورة:</label><input type="text" id="p-img"></div>
+        <button class="btn-main" onclick="saveProduct()">نشر المنتج 🚀</button>
     </div>
 
     <div id="manage-prods" class="section">
@@ -72,22 +68,42 @@
     </div>
 
     <div id="record-sale" class="section">
-        <div class="form-group"><label>رقم العميل (واتساب):</label><input type="text" id="s-client-phone"></div>
-        <div class="form-group"><label>اسم المنتج المباع:</label><input type="text" id="s-prod-name"></div>
-        <div class="form-group"><label>المبلغ المدفوع:</label><input type="number" id="s-amount"></div>
+        <div class="form-group"><label>رمز الطلب (#):</label><input type="text" id="s-order-id" placeholder="مثلاً: A100"></div>
+        <div class="form-group"><label>اسم العميل:</label><input type="text" id="s-client-name"></div>
+        <div class="form-group"><label>رقم الواتساب:</label><input type="text" id="s-phone"></div>
+        <div class="form-group"><label>المنتج المباع:</label><input type="text" id="s-product"></div>
         <div class="form-group"><label>صورة الحوالة:</label><input type="file" id="s-invoice" accept="image/*"></div>
-        <button class="btn-main" onclick="recordSaleToGoogle()">إرسال لجدول قوقل وتأكيد ✅</button>
+        <div class="form-group"><label>ملاحظات:</label><textarea id="s-notes"></textarea></div>
+        <button class="btn-main" onclick="recordSale()">حفظ الطلب بالرمز ✅</button>
+    </div>
+
+    <div id="search-order" class="section">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="أدخل رمز الطلب للبحث...">
+            <button class="btn-main" onclick="searchByCode()">بحث الآن 🔍</button>
+        </div>
+        <div id="search-res"></div>
     </div>
 
     <div id="settings" class="section">
         <div class="form-group"><label>توكن GitHub:</label><input type="password" id="sys-token"></div>
-        <button class="btn-main" onclick="saveConfig()" style="background:var(--green)">حفظ التوكن</button>
+        <button class="btn-main" onclick="saveConfig()">حفظ الإعدادات</button>
+    </div>
+</div>
+
+<div class="edit-overlay" id="editOverlay">
+    <div class="edit-modal">
+        <h3 style="color:var(--gold); margin-bottom:15px;">تعديل المنتج</h3>
+        <input type="hidden" id="edit-id">
+        <div class="form-group"><label>الاسم:</label><input type="text" id="edit-name"></div>
+        <div class="form-group"><label>السعر:</label><input type="number" id="edit-price"></div>
+        <button class="btn-main" onclick="submitEdit()">حفظ التعديلات</button>
+        <button class="btn-main" style="background:#444; color:white;" onclick="closeEdit()">إلغاء</button>
     </div>
 </div>
 
 <script>
-    const G_SCRIPT = 'https://script.google.com/macros/s/AKfycbxbYwConHNyO-Pxoh9d6cyoJof1WV28lKcD9AXl4rNjkrPL50254T_T19WPcmpjWPZS/exec';
-    const REPO_INFO = { owner: 'aabd78131-cmd', repo: 'omni-store', path: 'products.json' };
+    const REPO = { owner: 'aabd78131-cmd', repo: 'omni-store' };
 
     function showTab(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -96,102 +112,144 @@
         if(id === 'manage-prods') loadManageTable();
     }
 
-    // حفظ التوكن
     function saveConfig() {
         localStorage.setItem('omni_token', document.getElementById('sys-token').value);
-        alert("تم حفظ التوكن!");
+        alert("تم الحفظ!");
     }
 
-    // إضافة ونشر المنتج لـ GitHub
-    async function saveProduct() {
+    // دالة التعامل مع GitHub (جلب وتحديث)
+    async function githubSync(filename, newData, isSale = false) {
         const token = localStorage.getItem('omni_token');
-        if(!token) return alert("ضع التوكن أولاً");
-
-        const newProd = {
-            id: Date.now(),
-            name: document.getElementById('p-name').value,
-            category: document.getElementById('p-category').value,
-            price: document.getElementById('p-price').value,
-            vars: document.getElementById('p-vars').value,
-            img: document.getElementById('p-img').value,
-            extra_img: document.getElementById('p-extra-img').value,
-            desc: document.getElementById('p-desc').value
-        };
-
+        if(!token) return alert("ضع التوكن أولاً!");
+        
         try {
-            const res = await fetch(`https://api.github.com/repos/${REPO_INFO.owner}/${REPO_INFO.repo}/contents/${REPO_INFO.path}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
+            const url = `https://api.github.com/repos/${REPO.owner}/${REPO.repo}/contents/${filename}`;
+            const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
             const data = await res.json();
             let content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            content.push(newProd);
+            
+            if(isSale) { content.push(newData); } 
+            else { content = newData; }
 
-            await fetch(`https://api.github.com/repos/${REPO_INFO.owner}/${REPO_INFO.repo}/contents/${REPO_INFO.path}`, {
+            await fetch(url, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${token}` },
                 body: JSON.stringify({
-                    message: "إضافة منتج",
+                    message: "Update from OMNI ADMIN",
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
                     sha: data.sha
                 })
             });
-            alert("تم النشر بنجاح!");
-        } catch (e) { alert("خطأ في النشر"); }
+            return true;
+        } catch (e) { alert("فشل في المزامنة مع GitHub"); return false; }
     }
 
-    // إدارة المنتجات (حذف وتعديل)
+    // إضافة منتج
+    async function saveProduct() {
+        const prod = {
+            id: Date.now(),
+            name: document.getElementById('p-name').value,
+            price: document.getElementById('p-price').value,
+            vars: document.getElementById('p-vars').value,
+            img: document.getElementById('p-img').value
+        };
+        const ok = await githubSync('products.json', prod, true);
+        if(ok) alert("تم نشر المنتج!");
+    }
+
+    // إدارة وحذف وتعديل
     async function loadManageTable() {
-        const res = await fetch(`https://raw.githubusercontent.com/${REPO_INFO.owner}/${REPO_INFO.repo}/main/${REPO_INFO.path}`);
+        const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.repo}/main/products.json?t=${Date.now()}`);
         const prods = await res.json();
         const tbody = document.querySelector('#prods-table tbody');
-        tbody.innerHTML = prods.map((p, i) => `
+        tbody.innerHTML = prods.map(p => `
             <tr>
                 <td>${p.name}</td>
                 <td>${p.price}</td>
                 <td>
-                    <button class="btn-edit" onclick="editProd(${p.id})">تعديل</button>
-                    <button class="btn-del" onclick="deleteProd(${p.id})">حذف</button>
+                    <button style="background:var(--blue); border:none; padding:4px; border-radius:4px; cursor:pointer;" onclick="openEdit(${p.id}, '${p.name}', ${p.price})">✏️</button>
+                    <button style="background:var(--red); border:none; padding:4px; border-radius:4px; cursor:pointer;" onclick="deleteProd(${p.id})">🗑️</button>
                 </td>
             </tr>
         `).join('');
     }
 
-    async function deleteProd(id) {
-        if(!confirm("حذف المنتج نهائياً؟")) return;
-        const token = localStorage.getItem('omni_token');
-        // منطق الحذف من GitHub (جلب الملف -> فلترة -> رفع)
-        alert("جاري الحذف من السيرفر...");
+    function openEdit(id, name, price) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('edit-name').value = name;
+        document.getElementById('edit-price').value = price;
+        document.getElementById('editOverlay').style.display = 'flex';
     }
 
-    // تسجيل البيعة لقوقل شيت (مع تحويل الصورة لـ Base64)
-    async function recordSaleToGoogle() {
-        const file = document.getElementById('s-invoice').files[0];
-        let imgBase64 = "";
+    function closeEdit() { document.getElementById('editOverlay').style.display = 'none'; }
+
+    async function submitEdit() {
+        const id = document.getElementById('edit-id').value;
+        const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.repo}/main/products.json`);
+        let prods = await res.json();
+        const index = prods.findIndex(p => p.id == id);
+        prods[index].name = document.getElementById('edit-name').value;
+        prods[index].price = document.getElementById('edit-price').value;
         
+        const ok = await githubSync('products.json', prods, false);
+        if(ok) { alert("تم التعديل!"); closeEdit(); loadManageTable(); }
+    }
+
+    async function deleteProd(id) {
+        if(!confirm("حذف؟")) return;
+        const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.repo}/main/products.json`);
+        let prods = await res.json();
+        prods = prods.filter(p => p.id != id);
+        const ok = await githubSync('products.json', prods, false);
+        if(ok) loadManageTable();
+    }
+
+    // تسجيل البيعة بالرمز والصورة
+    async function recordSale() {
+        const file = document.getElementById('s-invoice').files[0];
+        let imgBase = "";
+        
+        const saveSaleData = async (img) => {
+            const sale = {
+                code: document.getElementById('s-order-id').value,
+                client: document.getElementById('s-client-name').value,
+                phone: document.getElementById('s-phone').value,
+                product: document.getElementById('s-product').value,
+                notes: document.getElementById('s-notes').value,
+                invoice: img,
+                date: new Date().toLocaleString('ar-SA')
+            };
+            const ok = await githubSync('sales.json', sale, true);
+            if(ok) alert("تم حفظ الطلب بالرمز!");
+        };
+
         if(file) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = async () => {
-                imgBase64 = reader.result;
-                sendData(imgBase64);
-            };
-        } else { sendData(""); }
+            reader.onload = () => saveSaleData(reader.result);
+        } else { saveSaleData(""); }
+    }
 
-        async function sendData(img) {
-            const saleData = {
-                phone: document.getElementById('s-client-phone').value,
-                product: document.getElementById('s-prod-name').value,
-                price: document.getElementById('s-amount').value,
-                invoice: img
-            };
-            
-            await fetch(G_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(saleData)
-            });
-            alert("تم تسجيل البيعة في جدول قوقل بنجاح!");
-        }
+    // بحث بالرمز
+    async function searchByCode() {
+        const code = document.getElementById('search-input').value;
+        const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.repo}/main/sales.json?t=${Date.now()}`);
+        const sales = await res.json();
+        const found = sales.find(s => s.code == code);
+        
+        const display = document.getElementById('search-res');
+        if(found) {
+            display.innerHTML = `
+                <div class="result-card">
+                    <p><b>📦 المنتج:</b> ${found.product}</p>
+                    <p><b>👤 العميل:</b> ${found.client}</p>
+                    <p><b>📱 واتساب:</b> ${found.phone}</p>
+                    <p><b>📅 التاريخ:</b> ${found.date}</p>
+                    <p><b>📝 ملاحظات:</b> ${found.notes}</p>
+                    ${found.invoice ? `<img src="${found.invoice}" class="inv-img">` : '<p>لا توجد صورة حوالة</p>'}
+                </div>
+            `;
+        } else { display.innerHTML = "<p>الرمز غير موجود!</p>"; }
     }
 </script>
 </body>
