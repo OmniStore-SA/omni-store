@@ -185,7 +185,7 @@
                     name: 'Cinema Simulator 2025',
                     price: 15,
                     img: 'منتج لعبه  اوفلاين Cinema Simulator 2025.jpg',
-                    desc: `اللعبه نظاميه من ستيم<br><br>كل زبون له تختيمه الخاص<br><br><b style="color:red;">تنبيه :</b> لاتنسى قبل ماتشغل اللعبه تتاكد ان الحساب اوف لاين<br><br><b style="color:#d4af37;">كيف اسوي اوفلاين؟</b><br>اطفي النت, اوبعد ماتحمل اللعبه تروح فوق يسار لكلمة steam وتضغط go offline.<br><br><b style="color:#d4af37;">اقدر اسوي فاميلي شير؟</b><br>لا واذا سويت راح يتم طردك من الحساب ولن يتم استرجاع اي مبلغ<br><br>جدا مهم لتحويل الحساب اوفلاين عشان لا يسحب منك الصور الان احطه لا تلخبط<br>
+                    desc: `اللعبه نظاميه من ستيم<br><br>كل زبون له تختيمه الخاص<br><br><b style="color:red;">تنبيه :</b> لاتنسى قبل ماتشغل اللعبه تتاكد ان الحساب اوف لاين<br><br><b style="color:#d4af37;">كيف اسوي اوفلاين؟</b><br>اطفي النت, اوبعد ماتحمل اللعبه تروح فوق يسار لكلمة steam وتضغط go offline.<br><br><b style="color:#d4af37;">اقدر اسوي فاميلي شير؟</b><br>لا واذا سويت راح يتم طردك من الحساب ولن يتم استرجاع اي مبلغ<br><br>
                     <div class="steam-instructions-grid">
                         <img src="ستيم 1 .jpeg">
                         <img src="ستيم 2 .jpeg">
@@ -279,7 +279,7 @@
                     name: 'شات جي بي تي شهر', 
                     price: '12.99', 
                     img: 'قسم الذكاء الاصطناعي .jpeg', 
-                    desc: 'الحساب مشترك انا اعطيك هو مو ايميل خاص فيك وعدم تغير الايميل او كلمة المرور او العبث في الحساب.<br><span style="color:#00ff00;">الضمان: التسليم فقط.</span>',
+                    desc: 'الحساب مشترك.<br><span style="color:#00ff00;">الضمان: التسليم فقط.</span>',
                     vars: [{n: 'شات جي بي تي شهر', p: 12.99}]
                 },
                 { 
@@ -287,7 +287,7 @@
                     name: 'كانفا 12 شهر بحسابك', 
                     price: '20', 
                     img: 'قسم الذكاء الاصطناعي .jpeg', 
-                    desc: 'تفعيل اشتراك كانفا برو لمدة 12 شهر على حسابك الشخصي.<br><span style="color:#00ff00;">الضمان: التسليم فقط.</span>',
+                    desc: 'تفعيل اشتراك كانفا برو لمدة 12 شهر.<br><span style="color:#00ff00;">الضمان: التسليم فقط.</span>',
                     vars: [{n: 'كانفا 12 شهر', p: 20}]
                 }
             ]
@@ -304,7 +304,7 @@
             const list = document.getElementById('products-list'); 
             list.innerHTML = '';
             
-            // 1. عرض المنتجات الأصلية المكتوبة في الكود أعلاه
+            // 1. عرض المنتجات الثابتة
             if (storeData[categoryName]) {
                 storeData[categoryName].forEach(product => {
                     let displayPrice = product.price === 'اختيار' ? 'خيارات متعددة' : product.price + ' ريال';
@@ -317,7 +317,7 @@
                 });
             }
 
-            // 2. عرض المنتجات المضافة يدوياً من لوحة التحكم (localStorage)
+            // 2. عرض المنتجات من لوحة التحكم (localStorage)
             const dynamicProducts = JSON.parse(localStorage.getItem('omni_store_products') || '[]');
             dynamicProducts.forEach(p => {
                 if (p.category === categoryName) {
@@ -335,7 +335,6 @@
 
         function showProductDetails(cat, id) {
             let p;
-            // البحث في المنتجات الأصلية أو الديناميكية
             if (cat === 'dynamic') {
                 const dynamicProducts = JSON.parse(localStorage.getItem('omni_store_products') || '[]');
                 p = dynamicProducts.find(x => x.id === id);
@@ -346,14 +345,13 @@
             if(!p) return;
 
             let varHtml = '';
-            
             if(p.vars) {
                 varHtml = `<div class="variant-grid">`;
                 p.vars.forEach((v) => {
                     varHtml += `
                     <label class="variant-option">
                         <span style="font-weight:bold;">${v.n} <br><span style="color:#d4af37; font-size:0.9rem;">${v.p} ريال</span></span>
-                        <input type="radio" name="prod_variant" value="${v.n}" data-price="${v.p}" onclick="document.getElementById('custom_val').value = '';">
+                        <input type="radio" name="prod_variant" value="${v.n}" data-price="${v.p}" onclick="if(document.getElementById('custom_val')) document.getElementById('custom_val').value = '';">
                     </label>`;
                 });
                 
@@ -368,11 +366,12 @@
             }
 
             document.getElementById('detail-content').innerHTML = `
-                <img src="${p.img}" style="width:100%; border-radius:20px; border:1px solid #333; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,0.5);">
+                <img src="${p.img}" style="width:100%; border-radius:20px; border:1px solid #333; margin-bottom:15px;">
                 <h2 style="color:#d4af37; font-size:1.6rem;">${p.name}</h2>
-                <div style="color:#ccc; line-height:1.7; margin:15px 0; font-size:1.05rem;">${p.desc}</div>
+                <p style="color:#888; font-size:0.8rem; margin-bottom:10px;">ID: ${p.id}</p>
+                <div style="color:#ccc; line-height:1.7; margin:15px 0;">${p.desc}</div>
                 ${varHtml}
-                <button class="btn-main ripple" onclick="addToCart('${cat}','${id}')" style="margin-top:25px;">إضافة إلى السلة 🛒</button>
+                <button class="btn-main ripple" onclick="addToCart('${cat}','${id}')">إضافة إلى السلة 🛒</button>
             `;
             
             document.getElementById('product-detail-modal').classList.add('active');
@@ -392,31 +391,27 @@
             let finalPrice = '';
             let numPrice = 0;
             
-            if(p.vars || p.allowCustom) {
-                const customInput = document.getElementById('custom_val');
-                const selectedRadio = document.querySelector('input[name="prod_variant"]:checked');
-                
-                const hasCustomVal = customInput && customInput.value !== "";
-                
-                if(!hasCustomVal && !selectedRadio) {
-                    return alert('إجباري تختار واحد من الخيارات أو تكتب العدد المطلوب!');
-                }
+            const customInput = document.getElementById('custom_val');
+            const selectedRadio = document.querySelector('input[name="prod_variant"]:checked');
+            
+            if((p.vars || p.allowCustom) && !customInput?.value && !selectedRadio) {
+                return alert('يرجى اختيار باقة أو كتابة عدد!');
+            }
 
-                if(hasCustomVal) {
-                    finalName += " (العدد المطلوب: " + customInput.value + ")";
-                    finalPrice = "السعر يتحدد بالخاص";
-                    numPrice = 0;
-                } else {
-                    finalName += " (" + selectedRadio.value + ")";
-                    finalPrice = selectedRadio.dataset.price + " ريال";
-                    numPrice = parseFloat(selectedRadio.dataset.price);
-                }
+            if(customInput?.value) {
+                finalName += " (الكمية: " + customInput.value + ")";
+                finalPrice = "يتحدد بالخاص";
+                numPrice = 0;
+            } else if(selectedRadio) {
+                finalName += " (" + selectedRadio.value + ")";
+                finalPrice = selectedRadio.dataset.price + " ريال";
+                numPrice = parseFloat(selectedRadio.dataset.price);
             } else {
                 finalPrice = p.price + " ريال";
                 numPrice = parseFloat(p.price);
             }
             
-            cart.push({ name: finalName, priceText: finalPrice, numericPrice: numPrice });
+            cart.push({ id: p.id, name: finalName, priceText: finalPrice, numericPrice: numPrice });
             document.getElementById('cart-count').innerText = cart.length;
             closeAll();
         }
@@ -426,31 +421,24 @@
             const totalDiv = document.getElementById('cart-total');
             list.innerHTML = '';
             let total = 0;
-            let hasCustom = false;
 
             if(cart.length === 0) {
-                list.innerHTML = `<div style="text-align:center; padding:30px; color:#666;">السلة فارغة حالياً</div>`;
+                list.innerHTML = `<div style="text-align:center; padding:20px; color:#666;">السلة فارغة</div>`;
                 totalDiv.innerText = '';
             } else {
                 cart.forEach((item, index) => {
                     total += item.numericPrice;
-                    if(item.numericPrice === 0) hasCustom = true;
-                    
                     list.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #1a1a1a;">
-                        <div style="flex:1;">
-                            <div style="font-weight:bold; font-size:1.05rem; margin-bottom:5px;">${item.name}</div>
-                            <div style="color:#d4af37;">${item.priceText}</div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #111;">
+                        <div>
+                            <div>${item.name}</div>
+                            <div style="color:#d4af37; font-size:0.9rem;">${item.priceText}</div>
                         </div>
-                        <div onclick="removeFromCart(${index})" style="color:#ff4444; font-size:24px; cursor:pointer; padding:0 10px;">✕</div>
+                        <div onclick="removeFromCart(${index})" style="color:red; cursor:pointer;">✕</div>
                     </div>`;
                 });
-                
-                let totalText = `المجموع: ${total.toFixed(2)} ريال`;
-                if(hasCustom) totalText += ` + (باقات تتحدد بالخاص)`;
-                totalDiv.innerText = totalText;
+                totalDiv.innerText = `الإجمالي: ${total.toFixed(2)} ريال`;
             }
-
             document.getElementById('cart-modal').classList.add('active');
             document.getElementById('overlay').style.display = 'block';
         }
@@ -462,23 +450,22 @@
         }
 
         function checkout() {
-            if(cart.length === 0) return alert('السلة فارغة!');
+            if(cart.length === 0) return;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-SA') + " " + now.toLocaleTimeString('ar-SA');
             
-            let message = `*طلب جديد من متجر أومني*\n`;
-            message += `==========================\n`;
+            let message = `*طلب جديد - متجر أومني*\n`;
+            message += `🗓️ التاريخ: ${dateStr}\n`;
+            message += `--------------------------\n`;
             
             let total = 0;
-            let hasCustom = false;
-            
             cart.forEach((item, idx) => {
-                message += `${idx + 1}. ${item.name} | [${item.priceText}]\n`;
+                message += `${idx + 1}. ${item.name}\n   🏷️ المعرف: ${item.id}\n   💰 السعر: [${item.priceText}]\n\n`;
                 total += item.numericPrice;
-                if(item.numericPrice === 0) hasCustom = true;
             });
             
-            message += `==========================\n`;
-            message += `*الإجمالي التقريبي: ${total.toFixed(2)} ريال*\n`;
-            if(hasCustom) message += `*(السعر النهائي يتحدد بالخاص لوجود باقات مخصصة)*`;
+            message += `--------------------------\n`;
+            message += `*الإجمالي: ${total.toFixed(2)} ريال*`;
             
             window.open(`https://wa.me/966548512295?text=${encodeURIComponent(message)}`);
         }
