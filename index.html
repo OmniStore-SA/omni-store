@@ -304,20 +304,47 @@
             const list = document.getElementById('products-list'); 
             list.innerHTML = '';
             
-            storeData[categoryName].forEach(product => {
-                let displayPrice = product.price === 'اختيار' ? 'خيارات متعددة' : product.price + ' ريال';
-                list.innerHTML += `
-                <div class="product-card ripple" onclick="showProductDetails('${categoryName}', '${product.id}')">
-                    <img src="${product.img}">
-                    <h3>${product.name}</h3>
-                    <div class="product-price">${displayPrice}</div>
-                </div>`;
+            // 1. عرض المنتجات الأصلية المكتوبة في الكود أعلاه
+            if (storeData[categoryName]) {
+                storeData[categoryName].forEach(product => {
+                    let displayPrice = product.price === 'اختيار' ? 'خيارات متعددة' : product.price + ' ريال';
+                    list.innerHTML += `
+                    <div class="product-card ripple" onclick="showProductDetails('${categoryName}', '${product.id}')">
+                        <img src="${product.img}">
+                        <h3>${product.name}</h3>
+                        <div class="product-price">${displayPrice}</div>
+                    </div>`;
+                });
+            }
+
+            // 2. عرض المنتجات المضافة يدوياً من لوحة التحكم (localStorage)
+            const dynamicProducts = JSON.parse(localStorage.getItem('omni_store_products') || '[]');
+            dynamicProducts.forEach(p => {
+                if (p.category === categoryName) {
+                    list.innerHTML += `
+                    <div class="product-card ripple" onclick="showProductDetails('dynamic', '${p.id}')">
+                        <img src="${p.img}">
+                        <h3>${p.name}</h3>
+                        <div class="product-price">${p.price} ريال</div>
+                    </div>`;
+                }
             });
+
             window.scrollTo(0,0);
         }
 
         function showProductDetails(cat, id) {
-            const p = storeData[cat].find(x => x.id === id);
+            let p;
+            // البحث في المنتجات الأصلية أو الديناميكية
+            if (cat === 'dynamic') {
+                const dynamicProducts = JSON.parse(localStorage.getItem('omni_store_products') || '[]');
+                p = dynamicProducts.find(x => x.id === id);
+            } else {
+                p = storeData[cat].find(x => x.id === id);
+            }
+
+            if(!p) return;
+
             let varHtml = '';
             
             if(p.vars) {
@@ -353,7 +380,14 @@
         }
 
         function addToCart(cat, id) {
-            const p = storeData[cat].find(x => x.id === id);
+            let p;
+            if (cat === 'dynamic') {
+                const dynamicProducts = JSON.parse(localStorage.getItem('omni_store_products') || '[]');
+                p = dynamicProducts.find(x => x.id === id);
+            } else {
+                p = storeData[cat].find(x => x.id === id);
+            }
+
             let finalName = p.name;
             let finalPrice = '';
             let numPrice = 0;
@@ -427,23 +461,10 @@
             toggleCart();
         }
 
-        // التعديل الجديد هنا لإضافة الرمز والتاريخ
         function checkout() {
             if(cart.length === 0) return alert('السلة فارغة!');
             
-            // 1. توليد رمز طلب رقمي فريد يعتمد على الوقت + أرقام عشوائية
-            const orderID = Math.floor(Date.now() / 1000).toString() + Math.floor(Math.random() * 9999);
-            
-            // 2. الحصول على التاريخ الحالي (يوم/شهر/سنة)
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const dateStr = `${day}/${month}/${year}`;
-
             let message = `*طلب جديد من متجر أومني*\n`;
-            message += `*رقم الطلب:* #${orderID}\n`; // إضافة الرمز
-            message += `*التاريخ:* ${dateStr}\n`;     // إضافة التاريخ
             message += `==========================\n`;
             
             let total = 0;
