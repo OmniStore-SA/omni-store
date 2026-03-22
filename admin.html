@@ -310,7 +310,40 @@
         sales.splice(i, 1);
         localStorage.setItem('omni_finance_records', JSON.stringify(sales));
         renderSales();
+    }<script type="module">
+  // استيراد المكتبات اللازمة
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+  // بياناتك من Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyCWkjGbA5gZBqr60Qa98WXsyrDZQjYv07I",
+    authDomain: "omnistore-a5251.firebaseapp.com",
+    databaseURL: "https://omnistore-a5251-default-rtdb.firebaseio.com",
+    projectId: "omnistore-a5251",
+    storageBucket: "omnistore-a5251.firebasestorage.app",
+    messagingSenderId: "542087784992",
+    appId: "1:542087784992:web:8a83435b3ef36678c3aa45",
+    measurementId: "G-HGGT5NMFB9"
+  };
+
+  // تشغيل المحرك
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+// هكذا نربط الزر بقاعدة البيانات لكي يرسل المنتجات
+const productsRef = ref(db, 'products');
+
+document.getElementById('addBtn').onclick = () => {
+    const name = document.getElementById('pName').value; // خانة اسم المنتج
+    const price = document.getElementById('pPrice').value; // خانة السعر
+
+    if (name && price) {
+        push(productsRef, { name, price })
+            .then(() => alert("بطل! المنتج نزل في المتجر ✅"))
+            .catch((err) => alert("فيه مشكلة: " + err.message));
+    } else {
+        alert("يا بطل، عبي البيانات كاملة أولاً!");
     }
-</script>
+};</script>
 </body>
 </html>
