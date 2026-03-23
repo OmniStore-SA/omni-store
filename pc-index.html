@@ -1,1 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNI STORE | متجر أومني - بوابة المستقبل الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- الأساسيات والتصميم الفخم (Premium PC Theme) --- */
+        :root { --gold: #d4af37; --bg: #050505; --card: #111; --ripple: rgba(255, 255, 255, 0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; overflow-x: hidden; scroll-behavior: smooth; }
 
+        /* تأثير الـ Ripple */
+        .ripple { position: relative; overflow: hidden; cursor: pointer; }
+        .ripple:after {
+            content: ""; display: block; position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            pointer-events: none; background-image: radial-gradient(circle, var(--ripple) 10%, transparent 10.01%);
+            background-repeat: no-repeat; background-position: 50%; transform: scale(10, 10);
+            opacity: 0; transition: transform .5s, opacity 1s;
+        }
+        .ripple:active:after { transform: scale(0, 0); opacity: 1; transition: 0s; }
+
+        /* --- الهيدر --- */
+        header {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.4);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; z-index: 1000;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .header-logo { width: 45px; animation: glow 2s infinite ease-in-out; }
+        @keyframes glow { 0%, 100% { filter: drop-shadow(0 0 5px var(--gold)); } 50% { filter: drop-shadow(0 0 15px var(--gold)); } }
+        .header-title { color: var(--gold); font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; }
+        
+        .header-center { display: flex; gap: 30px; list-style: none; }
+        .nav-link { text-decoration: none; color: white; font-weight: 700; transition: 0.3s; cursor: pointer; font-size: 0.9rem; }
+        .nav-link:hover { color: var(--gold); }
+        .nav-link.active { color: var(--gold); text-decoration: underline; }
+
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .search-icon, .cart-wrapper { font-size: 20px; color: var(--gold); cursor: pointer; transition: 0.3s; }
+        .search-icon:hover { transform: scale(1.1); }
+        .cart-wrapper { position: relative; }
+        .cart-badge { position: absolute; top: -8px; right: -12px; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; }
+        .btn-login { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 20px; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        .btn-login:hover { background: var(--gold); color: black; }
+
+        /* --- المحتوى الرئيسي --- */
+        main { padding-top: 100px; padding-bottom: 60px; }
+        .hero-section { width: 95%; margin: 0 auto 50px; border-radius: 25px; border: 2px solid var(--gold); overflow: hidden; background: #000; transition: 0.5s; }
+        .hero-banner { width: 100%; display: block; object-fit: cover; }
+        
+        .section-container { width: 95%; margin: 0 auto 60px; }
+        .section-header { color: var(--gold); font-weight: 900; font-size: 1.5rem; margin-bottom: 30px; text-align: right; }
+
+        /* --- دوارات المنتجات (Product Carousels) --- */
+        .carousel-wrapper { position: relative; width: 100%; overflow: hidden; padding: 10px; }
+        .carousel-list { display: flex; gap: 30px; transition: transform 0.5s ease; width: max-content; }
+        
+        .product-card { width: 280px; background: var(--card); border: 1px solid #222; border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--gold); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2); }
+        
+        .prod-img-wrapper { width: 100%; height: 180px; border-radius: 15px; border: 1px solid #333; overflow: hidden; margin-bottom: 15px; position: relative; }
+        .prod-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .product-card:hover .prod-img { transform: scale(1.05); }
+
+        .prod-name { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 10px; }
+        .prod-price { font-size: 1.5rem; font-weight: 900; color: var(--gold); margin-bottom: 15px; }
+
+        /* أزرار على الـ Hover */
+        .prod-actions { position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; gap: 10px; justify-content: center; opacity: 0; transform: translateY(10px); transition: 0.3s ease; }
+        .product-card:hover .prod-actions { opacity: 1; transform: translateY(0); }
+        
+        .btn-prod { background: var(--gold); color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
+        .btn-prod.alt { background: #333; color: var(--gold); }
+        .btn-prod:hover { filter: brightness(1.1); }
+
+        /* أزرار تنقل الدوار */
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); width: 45px; height: 45px; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 10; opacity: 0; transition: 0.3s; }
+        .carousel-wrapper:hover .carousel-btn { opacity: 1; }
+        .carousel-btn:hover { background: var(--gold); color: black; }
+        .prev { right: -15px; } .next { left: -15px; }
+
+        /* --- نوافذ تفاصيل المنتج والمودال (Modals) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; overflow-y: auto; padding: 20px; }
+        .modal-content { background: #151515; max-width: 650px; margin: 40px auto; border-radius: 30px; border: 2px solid var(--gold); padding: 30px; position: relative; animation: modalIn 0.4s ease-out; }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .close-modal { position: absolute; top: 20px; left: 20px; font-size: 30px; color: var(--gold); cursor: pointer; transition: 0.3s; }
+        .close-modal:hover { transform: scale(1.1); }
+
+        /* --- تذييل الصفحة (Footer) --- */
+        footer { background: #111; padding: 40px; border-top: 1px solid #333; text-align: center; color: #aaa; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left ripple" onclick="location.reload()">
+            <img src="https://via.placeholder.com/50?text=O" class="header-logo" onerror="this.src='https://via.placeholder.com/50'"> <div class="header-title">OMNI STORE</div>
+        </div>
+        <ul class="header-center">
+            <li class="nav-link active" onclick="goHome()">🏠 الرئيسية</li>
+            <li class="nav-link" onclick="openCat('entertainment')">🍿 ترفيه</li>
+            <li class="nav-link" onclick="openCat('social')">📸 سوشيال</li>
+            <li class="nav-link" onclick="openCat('steam')">🕹️ ستيم</li>
+            <li class="nav-link" onclick="openCat('ai')">🤖 ذكاء اصطناعي</li>
+        </ul>
+        <div class="header-right">
+            <div class="search-icon ripple">🔍</div>
+            <div class="cart-wrapper ripple" onclick="toggleCart()">
+                <span>🛒</span>
+                <div class="cart-badge" id="cart-count">0</div>
+            </div>
+            <button class="btn-login ripple">تسجيل الدخول</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero-section">
+            <img src="القائمه الرئيسيه .jpeg" class="hero-banner"> </div>
+
+        <div id="store-sections">
+            </div>
+    </main>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal ripple" onclick="closeModal()">&times;</span>
+            <img id="modal-img" src="" style="width:100%; border-radius:15px; margin-bottom:15px; border:1px solid #222;">
+            <h2 id="modal-title" style="color:var(--gold); margin-bottom:15px;"></h2>
+            <p id="modal-price" style="font-size:2rem; font-weight:900; margin-bottom:20px;"></p>
+            <p id="modal-desc" style="color:#ccc; font-size:0.9rem; line-height:1.8; white-space: pre-line;"></p>
+            
+            <div id="modal-variants" class="variant-box" style="display:none;">
+                <p style="color:var(--gold); margin-bottom:10px; font-weight:bold;">اختر العرض المطلوب:</p>
+                <div id="variant-list"></div>
+            </div>
+
+            <button class="btn-prod ripple" style="width:100%; margin-top:20px; font-size:1rem; padding:15px;" onclick="addToCart()">إضافة للسلة 🛒</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2023 - OMNI STORE. خياراتك الرقمية في مكان واحد.</p>
+        <p style="font-size: 0.8rem; margin-top:10px; color: #666;">للشكاوى والاقتراحات: 0548512295</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script>
+        // --- إعدادات Firebase (ركب قيمك الحقيقية هنا) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBw..._...-...",
+            authDomain: "omnistore-XXXXX.firebaseapp.com",
+            databaseURL: "https://omnistore-XXXXX-default-rtdb.firebaseio.com",
+            projectId: "omnistore-XXXXX",
+            storageBucket: "omnistore-XXXXX.appspot.com",
+            messagingSenderId: "XXXXXXXXXXXX",
+            appId: "1:XXXXXXXXXXXX:web:XXXXXXXXXXXX"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // بيانات المتجر الثابتة (أيقونات البانرات)
+        const categoryData = {
+            entertainment: { title: 'قسم الترفيه', banner: 'قسم اشتراكات الترفيه.jpeg' }, //image_2.png
+            social: { title: 'قسم انستا & تيك توك', banner: 'لوقو المتجر.jpeg' }, //image_4.png & image_5.png
+            steam: { title: 'ستيم أوفلاين', banner: 'قسم ستيم اوفلاين.jpeg' }, //image_6.png
+            ai: { title: 'الذكاء الاصطناعي', banner: 'قسم الذكاء الاصطناعي .jpeg' } //image_3.png
+        };
+
+        let currentProductData = {}; // لتخزين بيانات المنتج المعروض في المودال
+
+        // --- المزامنة الحية (Realtime Sync) ---
+        // استماع لأي تغيير في عقدة 'products' في Firebase
+        db.ref('products').on('value', (snapshot) => {
+            const products = snapshot.val() || {};
+            // تحويل الكائن إلى مصفوفة وإضافة المعرف (id)
+            const productsArray = Object.keys(products).map(key => ({
+                id: key,
+                ...products[key]
+            }));
+            renderStoreSections(productsArray);
+        });
+
+        // --- توليد المتجر ديناميكياً بناءً على البيانات القادمة من Firebase ---
+        function renderStoreSections(products) {
+            const sectionsContainer = document.getElementById('store-sections');
+            sectionsContainer.innerHTML = ''; // تفريغ المحتوى الحالي
+
+            // فرز المنتجات حسب الأقسام
+            const EntertainmentProds = products.filter(p => p.category === 'entertainment');
+            const SocialProds = products.filter(p => p.category === 'insta' || p.category === 'tiktok');
+            const SteamProds = products.filter(p => p.category === 'steam_offline');
+            const AIProds = products.filter(p => p.category === 'ai');
+
+            // وظيفة مساعدة لإنشاء قسم مع دوار (Carousel)
+            function createSection(catKey, prods, title = categoryData[catKey].title, banner = categoryData[catKey].banner) {
+                if (prods.length === 0) return ''; // لا تعرض القسم إذا لم يكن فيه منتجات
+
+                const cardsHtml = prods.map(p => `
+                    <div class="product-card ripple" onclick="openModal('${p.id}')">
+                        <div class="prod-img-wrapper">
+                            <img src="${p.img}" class="prod-img" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                        </div>
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price">${p.price} ريال</div>
+                        <div class="prod-actions">
+                            <button class="btn-prod alt ripple">تفاصيل</button>
+                            <button class="btn-prod ripple" onclick="addSingleToCart('${p.id}')">إضافة 🛒</button>
+                        </div>
+                    </div>`).join('');
+
+                return `
+                    <div class="section-container">
+                        <div class="hero-section" style="border: 1px solid #333; height: 120px; margin-bottom: 20px;">
+                            <img src="${banner}" class="hero-banner">
+                        </div>
+                        <div class="section-header">${title}</div>
+                        <div class="carousel-wrapper" id="carousel-${catKey}">
+                            <div class="carousel-list">${cardsHtml}</div>
+                            <button class="carousel-btn prev" onclick="moveCarousel('${catKey}', 1)">&#8250;</button>
+                            <button class="carousel-btn next" onclick="moveCarousel('${catKey}', -1)">&#8249;</button>
+                        </div>
+                    </div>`;
+            }
+
+            // تجميع وتوليد كل الأقسام
+            sectionsContainer.innerHTML += createSection('entertainment', EntertainmentProds);
+            sectionsContainer.innerHTML += createSection('social', SocialProds);
+            sectionsContainer.innerHTML += createSection('steam', SteamProds);
+            sectionsContainer.innerHTML += createSection('ai', AIProds);
+            
+            // تهيئة حركات الدوار
+            initializeCarousels();
+        }
+
+        // --- المودال ونظام الخيارات الإضافية ---
+        function parseVariants(varsString) {
+            if (!varsString) return null;
+            return varsString.split(',').map(v => {
+                const [n, p] = v.split('=');
+                return { n: n.trim(), p: p.trim() };
+            });
+        }
+
+        function openModal(id) {
+            db.ref(`products/${id}`).once('value', (snapshot) => {
+                const p = snapshot.val();
+                currentProductData = { id, ...p }; // حفظ البيانات
+                
+                document.getElementById('modal-img').src = p.img;
+                document.getElementById('modal-title').innerText = p.name;
+                document.getElementById('modal-price').innerText = `${p.price} ريال`;
+                document.getElementById('modal-desc').innerHTML = p.desc;
+
+                // التعامل مع الخيارات الإضافية (مثل شهر=10,شهرين=20)
+                const variants = parseVariants(p.vars);
+                const variantsBox = document.getElementById('modal-variants');
+                const variantsList = document.getElementById('variant-list');
+                
+                if (variants) {
+                    variantsBox.style.display = 'block';
+                    variantsList.innerHTML = variants.map((v, i) => `
+                        <label class="variant-option">
+                            <input type="radio" name="prod-var" value="${v.n}" data-price="${v.p}" ${i===0?'checked':''}>
+                            <span>${v.n} - <b style="color:var(--gold)">${v.p} ريال</b></span>
+                        </label>`).join('');
+                } else {
+                    variantsBox.style.display = 'none';
+                    variantsList.innerHTML = '';
+                }
+
+                document.getElementById('modalOverlay').style.display = 'block';
+                document.body.style.overflow = 'hidden'; // تجميد سكرول الصفحة الخلفية
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // --- دوارات البي سي (Carousel Mechanics) ---
+        const carouselsPos = {}; // لحفظ وضعية كل دوار
+
+        function initializeCarousels() {
+            const wrappers = document.querySelectorAll('.carousel-wrapper');
+            wrappers.forEach(wrap => {
+                carouselsPos[wrap.id.replace('carousel-','')] = 0;
+                moveCarousel(wrap.id.replace('carousel-',''), 0); // إعادة التعيين
+            });
+        }
+
+        function moveCarousel(catKey, dir) {
+            const list = document.querySelector(`#carousel-${catKey} .carousel-list`);
+            const width = document.querySelector('.product-card').offsetWidth + 30; // 30 is gap
+            
+            carouselsPos[catKey] += dir;
+            
+            // قيود للحركة (لا تخرج عن النطاق)
+            const max = list.children.length - Math.floor(list.parentElement.offsetWidth / width);
+            if(carouselsPos[catKey] < 0) carouselsPos[catKey] = 0;
+            if(carouselsPos[catKey] > max) carouselsPos[catKey] = max;
+            
+            list.style.transform = `translateX(${carouselsPos[catKey] * width}px)`;
+        }
+
+        // --- القائمة العلوية ونظام التنقل ---
+        function goHome() {
+            location.href = '#main';
+            updateActiveLink('home');
+        }
+
+        function openCat(catKey) {
+            // تأكد من جلب البانرimage_1.png العريض في الأعلى
+            document.querySelector('.hero-section').innerHTML = '<img src="القائمه الرئيسيه .jpeg" class="hero-banner">';
+            
+            const targetSec = document.getElementById(`carousel-${catKey}`);
+            if(targetSec) targetSec.parentElement.scrollIntoView({ behavior: 'smooth' });
+            updateActiveLink(catKey);
+        }
+
+        function updateActiveLink(catKey) {
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            // تحتاج لنظام تحديد الرابط النشط، يمكنك تجاوزها حالياً
+        }
+
+        // --- سلة المشتريات والواتساب (احتياطي من الجوال) ---
+        // في البي سي الفخم، يفضل نظام سلة أكثر تطوراً، لكن هذا يحافظ على الربط اللي سويناه
+        function addSingleToCart(id) {
+            db.ref(`products/${id}`).once('value', (snapshot) => {
+                const p = snapshot.val();
+                let fName = p.name, fPrice = parseFloat(p.price);
+                const vars = parseVariants(p.vars);
+                if(vars) { fName += ` (${vars[0].n})`; fPrice = parseFloat(vars[0].p); }
+                cart.push({name: fName, price: fPrice});
+                updateCartUI();
+                alert('تمت الإضافة للسلة!');
+            });
+        }
+        
+        function addToCart() {
+            let fName = currentProductData.name;
+            let fPrice = parseFloat(currentProductData.price);
+            const vars = parseVariants(currentProductData.vars);
+            
+            if (vars) {
+                const selected = document.querySelector('input[name="prod-var"]:checked');
+                fName += ` (${selected.value})`;
+                fPrice = parseFloat(selected.getAttribute('data-price'));
+            }
+            
+            cart.push({name: fName, price: fPrice});
+            updateCartUI();
+            alert('تمت الإضافة للسلة!');
+            closeModal();
+        }
+
+        let cart = [];
+        function updateCartUI() { document.getElementById('cart-count').innerText = cart.length; }
+        function toggleCart() {
+            if(cart.length === 0) return alert('السلة فارغة يا راعي المتجر');
+            let userName = prompt("الاسم:") || "عميل أومني";
+            let msg = `*طلب جديد من OMNI PC المتجر*\nالاسم: ${userName}\n----------------\n`;
+            let total = 0;
+            cart.forEach(i => { msg += `- ${i.name} (${i.price})\n`; total += i.price; });
+            msg += `----------------\n*المجموع: ${total} ريال*`;
+            window.open(`https://wa.me/0548512295?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>
